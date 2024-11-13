@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import userRouter from './routes/user.route';
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Routes
+app.use('/api/users', userRouter);
 
 // 404 Fallback
 app.use((req: Request, res: Response) => {
