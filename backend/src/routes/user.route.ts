@@ -10,4 +10,8 @@ userRouter.post('/login', userController.loginUser);
 userRouter.get('/logout', userController.logoutUser);
 userRouter.get('/check-auth', cookieAuthCheck, userController.checkAuth);
 
+userRouter.get('/:id', userController.getUserById);
+userRouter.put('/:id', userController.updateUserById);
+userRouter.delete('/:id', userController.deleteUserById);
+
 export default userRouter;

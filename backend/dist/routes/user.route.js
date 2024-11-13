@@ -12,4 +12,7 @@ userRouter.post('/sign-up', user_controller_1.default.addUser);
 userRouter.post('/login', user_controller_1.default.loginUser);
 userRouter.get('/logout', user_controller_1.default.logoutUser);
 userRouter.get('/check-auth', auth_1.cookieAuthCheck, user_controller_1.default.checkAuth);
+userRouter.get('/:id', user_controller_1.default.getUserById);
+userRouter.put('/:id', user_controller_1.default.updateUserById);
+userRouter.delete('/:id', user_controller_1.default.deleteUserById);
 exports.default = userRouter;

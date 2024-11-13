@@ -79,10 +79,44 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 const checkAuth = (req, res) => {
     res.status(200).send('Auth checked successful');
 };
+// Get user by id
+const getUserById = (req, res) => {
+    const { id } = req.params;
+    const user = user_model_1.default.findById(id);
+    if (!user) {
+        res.status(404).send('User not found');
+        return;
+    }
+    res.json(user);
+};
+// Update user by id
+const updateUserById = (req, res) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const user = user_model_1.default.editUser(id, { name });
+    if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+    }
+    res.status(200).json(user);
+};
+// Delete user by id
+const deleteUserById = (req, res) => {
+    const { id } = req.params;
+    const isDeleted = user_model_1.default.deleteUser(id);
+    if (!isDeleted) {
+        res.status(404).send('User not found');
+        return;
+    }
+    res.status(200).send('User deleted');
+};
 exports.default = {
     getUsers,
     addUser,
     loginUser,
     logoutUser,
-    checkAuth
+    checkAuth,
+    getUserById,
+    updateUserById,
+    deleteUserById
 };
