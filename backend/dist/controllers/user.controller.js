@@ -38,7 +38,46 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({ user, success: true });
     }
 });
+// Login user
+const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, password } = req.body;
+    const user = user_model_1.default.findByName(name);
+    if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+    }
+    const isMatch = yield (0, hash_util_1.compareHash)(password, user.password);
+    if (!isMatch) {
+        res.status(401).json({ message: 'Password is invalid' });
+        return;
+    }
+    res.cookie('isAuthenticated', true, {
+        httpOnly: true,
+        maxAge: 3 * 60 * 1000,
+        signed: true
+    });
+    res.cookie('userId', user.id, {
+        httpOnly: true,
+        maxAge: 3 * 60 * 1000,
+        signed: true
+    });
+    res.status(200).json({ user, success: true, message: 'Login authenticated' });
+});
+// Logout user
+const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.clearCookie('isAuthenticated', {
+        httpOnly: true,
+        signed: true
+    });
+    res.clearCookie('userId', {
+        httpOnly: true,
+        signed: true
+    });
+    res.status(200).json({ message: 'User logged out successfully' });
+});
 exports.default = {
     getUsers,
-    addUser
+    addUser,
+    loginUser,
+    logoutUser
 };
