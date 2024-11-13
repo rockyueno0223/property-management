@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route';
+import propertyRouter from './routes/property.route';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cookieParser(process.env.COOKIE_SIGN_KEY));
 
 // Routes
 app.use('/api/users', userRouter);
+app.use('/api/properties', propertyRouter);
 
 // 404 Fallback
 app.use((req: Request, res: Response) => {
