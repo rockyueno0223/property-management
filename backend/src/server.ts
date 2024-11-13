@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route';
 
 dotenv.config();
@@ -10,6 +11,7 @@ const app = express();
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_SIGN_KEY));
 
 // Routes
 app.use('/api/users', userRouter);
