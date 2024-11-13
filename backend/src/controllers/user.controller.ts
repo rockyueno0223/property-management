@@ -69,9 +69,15 @@ const logoutUser = async (req: Request<{}, {}, User>, res: Response) => {
   res.status(200).json({ message: 'User logged out successfully' });
 };
 
+// Check authentication
+const checkAuth = (req: Request, res: Response) => {
+  res.status(200).send('Auth checked successful');
+};
+
 export default {
   getUsers,
   addUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  checkAuth
 };
