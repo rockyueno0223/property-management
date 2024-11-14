@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Property } from "../types/property";
+import { Property } from "../../../shared/types/property";
 
 class PropertyModel {
   private properties: Property[] = [];

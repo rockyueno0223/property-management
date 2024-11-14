@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import userModel from '../models/user.model';
-import { User } from '../types/user';
+import { User } from '../../../shared/types/user';
 import { hashed, compareHash } from '../utils/hash.util';
 
 // Get users
@@ -18,12 +18,12 @@ const addUser = async (req: Request<{}, {}, User>, res: Response) => {
   if (user) {
     res.cookie('isAuthenticated', true, {
       httpOnly: true,
-      maxAge: 3 * 60 * 1000,
+      maxAge: 60 * 60 * 1000, // change later
       signed: true,
     });
     res.cookie('userId', user.id, {
       httpOnly: true,
-      maxAge: 3 * 60 * 1000,
+      maxAge: 60 * 60 * 1000, // change later
       signed: true,
     });
     res.status(201).json({ user, success: true });
@@ -45,12 +45,12 @@ const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
   }
   res.cookie('isAuthenticated', true, {
     httpOnly: true,
-    maxAge: 3 * 60 * 1000,
+    maxAge: 60 * 60 * 1000, // change later
     signed: true
   });
   res.cookie('userId', user.id, {
     httpOnly: true,
-    maxAge: 3 * 60 * 1000,
+    maxAge: 60 * 60 * 1000, // change later
     signed: true
   });
   res.status(200).json({ user, success: true, message: 'Login authenticated' });

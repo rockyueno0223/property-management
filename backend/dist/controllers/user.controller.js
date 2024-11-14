@@ -27,12 +27,12 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (user) {
         res.cookie('isAuthenticated', true, {
             httpOnly: true,
-            maxAge: 3 * 60 * 1000,
+            maxAge: 60 * 60 * 1000, // change later
             signed: true,
         });
         res.cookie('userId', user.id, {
             httpOnly: true,
-            maxAge: 3 * 60 * 1000,
+            maxAge: 60 * 60 * 1000, // change later
             signed: true,
         });
         res.status(201).json({ user, success: true });
@@ -53,12 +53,12 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     res.cookie('isAuthenticated', true, {
         httpOnly: true,
-        maxAge: 3 * 60 * 1000,
+        maxAge: 60 * 60 * 1000, // change later
         signed: true
     });
     res.cookie('userId', user.id, {
         httpOnly: true,
-        maxAge: 3 * 60 * 1000,
+        maxAge: 60 * 60 * 1000, // change later
         signed: true
     });
     res.status(200).json({ user, success: true, message: 'Login authenticated' });

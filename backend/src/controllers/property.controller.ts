@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import propertyModel from '../models/property.model';
-import { Property } from '../types/property';
+import { Property } from '../../../shared/types/property';
 
 // Get properties
 const getProperties = (req: Request, res: Response) => {
