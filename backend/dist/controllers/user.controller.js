@@ -21,9 +21,9 @@ const getUsers = (req, res) => {
 };
 // Add user
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, password, accountType } = req.body;
+    const { username, email, password, accountType } = req.body;
     const hashedPassword = yield (0, hash_util_1.hashed)(password);
-    const user = user_model_1.default.createUser({ name, password: hashedPassword, accountType });
+    const user = user_model_1.default.createUser({ username, email, password: hashedPassword, accountType });
     if (user) {
         res.cookie('isAuthenticated', true, {
             httpOnly: true,
@@ -40,8 +40,8 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // Login user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, password } = req.body;
-    const user = user_model_1.default.findByName(name);
+    const { username, password } = req.body;
+    const user = user_model_1.default.findByUsername(username);
     if (!user) {
         res.status(404).json({ message: 'User not found' });
         return;
@@ -92,8 +92,8 @@ const getUserById = (req, res) => {
 // Update user by id
 const updateUserById = (req, res) => {
     const { id } = req.params;
-    const { name } = req.body;
-    const user = user_model_1.default.editUser(id, { name });
+    const { username, email } = req.body;
+    const user = user_model_1.default.editUser(id, { username, email });
     if (!user) {
         res.status(404).json({ message: "User not found" });
         return;

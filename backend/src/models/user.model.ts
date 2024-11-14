@@ -16,9 +16,9 @@ class UserModel {
     return user;
   };
 
-  // Get user by name
-  findByName(name: string): User | undefined {
-    const user = this.users.find(user => user.name === name);
+  // Get user by username
+  findByUsername(username: string): User | undefined {
+    const user = this.users.find(user => user.username === username);
     if (user) {
       return user;
     }
@@ -40,8 +40,11 @@ class UserModel {
     const index = this.users.findIndex(user => user.id === id);
     if (index === -1) return undefined;
     const updatedUser = {
-      ...this.users[index],
-      ...newData
+      id: this.users[index].id,
+      username: newData.username ?? this.users[index].username,
+      email: newData.email ?? this.users[index].email,
+      password: this.users[index].password,
+      accountType: this.users[index].accountType
     };
     this.users[index] = updatedUser;
     return updatedUser;

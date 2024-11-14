@@ -11,9 +11,9 @@ const getUsers = (req: Request, res: Response) => {
 
 // Add user
 const addUser = async (req: Request<{}, {}, User>, res: Response) => {
-  const { name, password, accountType } = req.body;
+  const { username, email, password, accountType } = req.body;
   const hashedPassword = await hashed(password);
-  const user = userModel.createUser({ name, password: hashedPassword, accountType });
+  const user = userModel.createUser({ username, email, password: hashedPassword, accountType });
 
   if (user) {
     res.cookie('isAuthenticated', true, {
@@ -32,8 +32,8 @@ const addUser = async (req: Request<{}, {}, User>, res: Response) => {
 
 // Login user
 const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
-  const { name, password } = req.body;
-  const user = userModel.findByName(name);
+  const { username, password } = req.body;
+  const user = userModel.findByUsername(username);
   if (!user) {
     res.status(404).json({ message: 'User not found' });
     return;
@@ -88,8 +88,8 @@ const getUserById = (req: Request<{ id: string }>, res: Response) => {
 // Update user by id
 const updateUserById = (req: Request<{ id: string }, {}, User>, res: Response) => {
   const { id } = req.params;
-  const { name } = req.body;
-  const user = userModel.editUser(id, { name });
+  const { username, email } = req.body;
+  const user = userModel.editUser(id, { username, email });
   if (!user) {
     res.status(404).json({ message: "User not found" });
     return;
