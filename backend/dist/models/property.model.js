@@ -3,8 +3,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
 class PropertyModel {
     constructor() {
-        this.properties = [];
+        this.properties = [
+            {
+                id: "1",
+                title: "Downtown 2 minutes walk from Vancouver city center station. Get discount first month",
+                description: "desc1",
+                rent: 900,
+                imageUrl: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?cs=srgb&dl=pexels-binyaminmellish-106399.jpg&fm=jpg",
+                street: "W Hasting",
+                city: "Vancouver",
+                province: "BC",
+                postalCode: "V6ZAAA",
+                ownerId: "aaa",
+                createdAt: ""
+            },
+            {
+                id: "2",
+                title: "title2",
+                description: "desc2",
+                rent: 1200,
+                imageUrl: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?cs=srgb&dl=pexels-binyaminmellish-106399.jpg&fm=jpg",
+                street: "Granville",
+                city: "Vancouver",
+                province: "BC",
+                postalCode: "V6ZBBB",
+                ownerId: "aaa",
+                createdAt: ""
+            }
+        ];
     }
+    // test code, delete later
     // Get all properties
     findAll() {
         return this.properties;
