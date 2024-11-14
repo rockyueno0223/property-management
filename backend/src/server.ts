@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import userRouter from './routes/user.route';
 import propertyRouter from './routes/property.route';
 
@@ -10,6 +11,10 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SIGN_KEY));
