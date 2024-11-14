@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Link, useNavigate } from "react-router-dom"
+import { useAppContext } from "@/context/AppContext"
 
 const formSchema = z.object({
   username: z.string()
@@ -34,6 +35,7 @@ const formSchema = z.object({
 
 export const Signup = () => {
   const navigate = useNavigate();
+  const { setUser } = useAppContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,6 +61,7 @@ export const Signup = () => {
         return;
       }
       if (res.ok) {
+        setUser(data.user);
         navigate('/dashboard');
       }
     } catch (error) {

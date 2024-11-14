@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Property } from '../../../shared/types/property'
 import { PropertyCard } from '@/components/PropertyCard';
+import { useAppContext } from '@/context/AppContext';
 
 export const Dashboard = () => {
-  const [properties, setProperties] = useState<Property[]>([]);
+  const { properties, setProperties } = useAppContext();
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -20,11 +21,12 @@ export const Dashboard = () => {
       }
     }
     fetchProperty();
-  }, [])
+  }, [setProperties]);
+
   return (
     <div className="w-full max-w-screen-xl mx-auto p-3 flex flex-col sm:flex-row gap-3">
       {properties.map((property: Property) => (
-        <PropertyCard property={property} />
+        <PropertyCard key={property.id} property={property} />
       ))}
     </div>
   )
