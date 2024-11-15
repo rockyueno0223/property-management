@@ -6,6 +6,7 @@ import { Signup } from "@/pages/Signup"
 import { PropertyDetail } from "@/pages/PropertyDetail"
 import { useAppContext } from "@/context/AppContext"
 import { Header } from "@/components/Header"
+import { PrivateRoute } from "@/pages/PrivateRoute"
 
 function App() {
   const { user } = useAppContext();
@@ -14,11 +15,18 @@ function App() {
     <BrowserRouter>
       {user && <Header />}
       <Routes>
+        {/* Dashboard page when authenticated */}
+        {/* Login page when not authenticated */}
         <Route path="/" element={<RootRedirect />} />
+
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/:propertyId" element={<PropertyDetail />} />
+
+        {/* Only when authenticated */}
+        <Route element={<PrivateRoute />} >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/:propertyId" element={<PropertyDetail />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
