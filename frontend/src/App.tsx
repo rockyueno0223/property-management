@@ -4,10 +4,15 @@ import { Signin } from "@/pages/Signin"
 import { Dashboard } from "@/pages/Dashboard"
 import { Signup } from "@/pages/Signup"
 import { PropertyDetail } from "@/pages/PropertyDetail"
+import { useAppContext } from "@/context/AppContext"
+import { Header } from "@/components/Header"
 
 function App() {
+  const { user } = useAppContext();
+
   return (
     <BrowserRouter>
+      {user && <Header />}
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/signin" element={<Signin />} />
