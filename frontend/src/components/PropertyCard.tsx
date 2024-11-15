@@ -29,7 +29,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
               {user?.accountType === 'resident' ? 'Show detail' : 'Update'}
             </Button>
           </Link>
-          {user?.accountType}
         </div>
       </div>
     </div>

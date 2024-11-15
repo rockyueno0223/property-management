@@ -4,7 +4,7 @@ import { PropertyCard } from '@/components/PropertyCard';
 import { useAppContext } from '@/context/AppContext';
 
 export const Dashboard = () => {
-  const { properties, setProperties } = useAppContext();
+  const { user, properties, setProperties } = useAppContext();
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -15,13 +15,18 @@ export const Dashboard = () => {
           console.error(data.message);
           return;
         }
-        setProperties(data);
+        if (user?.accountType === 'owner') {
+          const filteredData = data.filter((property: Property) => property.ownerId === user?.id);
+          setProperties(filteredData);
+        } else {
+          setProperties(data);
+        }
       } catch (error) {
         console.error((error as Error).message);
       }
     }
     fetchProperty();
-  }, [setProperties]);
+  }, [setProperties, user]);
 
   return (
     <div className="w-full max-w-screen-xl mx-auto p-3 flex flex-col sm:flex-row gap-3">
