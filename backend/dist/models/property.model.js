@@ -10,10 +10,10 @@ class PropertyModel {
                 description: "desc1",
                 rent: 900,
                 imageUrl: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?cs=srgb&dl=pexels-binyaminmellish-106399.jpg&fm=jpg",
-                street: "W Hasting",
+                street: "609 W Hastings St",
                 city: "Vancouver",
                 province: "BC",
-                postalCode: "V6ZAAA",
+                postalCode: "V6Z AAA",
                 ownerId: "aaa",
                 createdAt: "2024-6-30"
             },
@@ -23,11 +23,11 @@ class PropertyModel {
                 description: "desc2",
                 rent: 1200,
                 imageUrl: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?cs=srgb&dl=pexels-binyaminmellish-106399.jpg&fm=jpg",
-                street: "Granville",
+                street: "543 Seymour St",
                 city: "Vancouver",
                 province: "BC",
-                postalCode: "V6ZBBB",
-                ownerId: "bbb",
+                postalCode: "V6Z BBB",
+                ownerId: "aaa",
                 createdAt: "2024-10-31"
             }
         ];

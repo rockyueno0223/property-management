@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Property } from "../../../shared/types/property";
 import { User } from "../../../shared/types/user";
+import { MapComponent } from "@/components/MapComponent";
 
 export const PropertyDetail = () => {
   const { propertyId } = useParams<{ propertyId: string }>();
@@ -67,6 +68,7 @@ export const PropertyDetail = () => {
         </p>
         <p>{property?.createdAt}</p>
       </div>
+      <MapComponent address={`${property?.street}, ${property?.city}, ${property?.province}`} />
     </div>
   )
 }
