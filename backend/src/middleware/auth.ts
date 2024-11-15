@@ -5,6 +5,6 @@ export const cookieAuthCheck = (req: Request, res: Response, next: NextFunction)
   if (isAuthenticated) {
     next()
   } else {
-    res.status(403).send()
+    res.status(403).json({ success: false, message: 'Unauthorized'})
   }
 }

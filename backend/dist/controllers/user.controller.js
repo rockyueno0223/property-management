@@ -17,7 +17,7 @@ const hash_util_1 = require("../utils/hash.util");
 // Get users
 const getUsers = (req, res) => {
     const users = user_model_1.default.findAll();
-    res.json(users);
+    res.json({ users, success: true });
 };
 // Add user
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,18 +37,21 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         res.status(201).json({ user, success: true });
     }
+    else {
+        res.status(500).json({ success: false, message: 'Failed to create user' });
+    }
 });
 // Login user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     const user = user_model_1.default.findByUsername(username);
     if (!user) {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ success: false, message: 'User not found' });
         return;
     }
     const isMatch = yield (0, hash_util_1.compareHash)(password, user.password);
     if (!isMatch) {
-        res.status(401).json({ message: 'Password is invalid' });
+        res.status(401).json({ success: false, message: 'Password is invalid' });
         return;
     }
     res.cookie('isAuthenticated', true, {
@@ -73,21 +76,21 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         httpOnly: true,
         signed: true
     });
-    res.status(200).json({ message: 'User logged out successfully' });
+    res.status(200).json({ success: true, message: 'User logged out successfully' });
 });
 // Check authentication
 const checkAuth = (req, res) => {
-    res.status(200).send('Auth checked successful');
+    res.status(200).json({ success: true, message: 'Auth checked successful' });
 };
 // Get user by id
 const getUserById = (req, res) => {
     const { id } = req.params;
     const user = user_model_1.default.findById(id);
     if (!user) {
-        res.status(404).send('User not found');
+        res.status(404).json({ success: false, message: 'User not found' });
         return;
     }
-    res.json(user);
+    res.json({ user, success: true });
 };
 // Update user by id
 const updateUserById = (req, res) => {
@@ -95,20 +98,20 @@ const updateUserById = (req, res) => {
     const { username, email } = req.body;
     const user = user_model_1.default.editUser(id, { username, email });
     if (!user) {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ success: false, message: "User not found" });
         return;
     }
-    res.status(200).json(user);
+    res.status(200).json({ user, success: true });
 };
 // Delete user by id
 const deleteUserById = (req, res) => {
     const { id } = req.params;
     const isDeleted = user_model_1.default.deleteUser(id);
     if (!isDeleted) {
-        res.status(404).send('User not found');
+        res.status(404).json({ success: false, message: 'User not found' });
         return;
     }
-    res.status(200).send('User deleted');
+    res.status(200).json({ success: true, message: 'User deleted' });
 };
 exports.default = {
     getUsers,

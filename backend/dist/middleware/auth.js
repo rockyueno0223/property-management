@@ -7,7 +7,7 @@ const cookieAuthCheck = (req, res, next) => {
         next();
     }
     else {
-        res.status(403).send();
+        res.status(403).json({ success: false, message: 'Unauthorized' });
     }
 };
 exports.cookieAuthCheck = cookieAuthCheck;

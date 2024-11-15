@@ -13,7 +13,8 @@ export const RootRedirect = () => {
             credentials: "include",
           }
         );
-        if (res.ok) {
+        const data = await res.json();
+        if (res.ok && data.success) {
           navigate('/dashboard');
         } else {
           navigate('/signin');

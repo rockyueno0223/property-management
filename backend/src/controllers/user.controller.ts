@@ -6,7 +6,7 @@ import { hashed, compareHash } from '../utils/hash.util';
 // Get users
 const getUsers = (req: Request, res: Response) => {
   const users = userModel.findAll();
-  res.json(users);
+  res.json({ users, success: true });
 };
 
 // Add user
@@ -27,6 +27,8 @@ const addUser = async (req: Request<{}, {}, User>, res: Response) => {
       signed: true,
     });
     res.status(201).json({ user, success: true });
+  } else {
+    res.status(500).json({ success: false, message: 'Failed to create user' });
   }
 };
 
@@ -35,12 +37,12 @@ const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
   const { username, password } = req.body;
   const user = userModel.findByUsername(username);
   if (!user) {
-    res.status(404).json({ message: 'User not found' });
+    res.status(404).json({ success: false, message: 'User not found' });
     return;
   }
   const isMatch = await compareHash(password, user.password);
   if (!isMatch) {
-    res.status(401).json({ message: 'Password is invalid' });
+    res.status(401).json({ success: false, message: 'Password is invalid' });
     return;
   }
   res.cookie('isAuthenticated', true, {
@@ -66,12 +68,12 @@ const logoutUser = async (req: Request<{}, {}, User>, res: Response) => {
     httpOnly: true,
     signed: true
   });
-  res.status(200).json({ message: 'User logged out successfully' });
+  res.status(200).json({ success: true, message: 'User logged out successfully' });
 };
 
 // Check authentication
 const checkAuth = (req: Request, res: Response) => {
-  res.status(200).send('Auth checked successful');
+  res.status(200).json({ success: true, message: 'Auth checked successful' });
 };
 
 // Get user by id
@@ -79,10 +81,10 @@ const getUserById = (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
   const user = userModel.findById(id);
   if (!user) {
-    res.status(404).send('User not found');
+    res.status(404).json({ success: false, message: 'User not found' });
     return;
   }
-  res.json(user);
+  res.json({ user, success: true });
 };
 
 // Update user by id
@@ -91,10 +93,10 @@ const updateUserById = (req: Request<{ id: string }, {}, User>, res: Response) =
   const { username, email } = req.body;
   const user = userModel.editUser(id, { username, email });
   if (!user) {
-    res.status(404).json({ message: "User not found" });
+    res.status(404).json({ success: false, message: "User not found" });
     return;
   }
-  res.status(200).json(user);
+  res.status(200).json({ user, success: true });
 };
 
 // Delete user by id
@@ -102,10 +104,10 @@ const deleteUserById = (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
   const isDeleted = userModel.deleteUser(id);
   if (!isDeleted) {
-    res.status(404).send('User not found');
+    res.status(404).json({ success: false, message: 'User not found' });
     return;
   }
-  res.status(200).send('User deleted');
+  res.status(200).json({ success: true, message: 'User deleted'});
 };
 
 export default {

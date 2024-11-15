@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Moon, Sun, LogOut } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
 
 export const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const { setUser } = useAppContext();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,6 +27,25 @@ export const Header: React.FC = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('http://localhost:3500/api/users/logout', {
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        console.error(data.message);
+        return;
+      }
+      if (res.ok) {
+        setUser(null);
+        navigate('/');
+      }
+    } catch (error) {
+      console.error((error as Error).message);
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -54,6 +76,7 @@ export const Header: React.FC = () => {
             <button
               className="ml-3 rounded-md p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white dark:text-gray-300 dark:hover:text-white"
               aria-label="Logout"
+              onClick={handleSignout}
             >
               <LogOut className="h-5 w-5" aria-hidden="true" />
             </button>
