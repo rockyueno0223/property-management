@@ -2,7 +2,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { User } from "../../../shared/types/user";
 
 class UserModel {
-  private users: User[] = [];
+  private users: User[] = [
+    {
+      id: "aaa",
+      username: "John",
+      email: "john@gmail.com",
+      password: "aaaaaa",
+      accountType: "owner"
+    }
+  ];// test code, delete later
 
   // Get all users
   findAll(): User[] {

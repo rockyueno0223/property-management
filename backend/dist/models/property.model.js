@@ -15,7 +15,7 @@ class PropertyModel {
                 province: "BC",
                 postalCode: "V6ZAAA",
                 ownerId: "aaa",
-                createdAt: ""
+                createdAt: "2024-6-30"
             },
             {
                 id: "2",
@@ -27,8 +27,8 @@ class PropertyModel {
                 city: "Vancouver",
                 province: "BC",
                 postalCode: "V6ZBBB",
-                ownerId: "aaa",
-                createdAt: ""
+                ownerId: "bbb",
+                createdAt: "2024-10-31"
             }
         ];
     }

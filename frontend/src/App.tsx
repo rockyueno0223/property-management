@@ -3,6 +3,7 @@ import { RootRedirect } from "@/pages/RootRedirect"
 import { Signin } from "@/pages/Signin"
 import { Dashboard } from "@/pages/Dashboard"
 import { Signup } from "@/pages/Signup"
+import { PropertyDetail } from "@/pages/PropertyDetail"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/:propertyId" element={<PropertyDetail />} />
       </Routes>
     </BrowserRouter>
   )
