@@ -5,7 +5,7 @@ import { useAppContext } from '@/context/AppContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { setUser } = useAppContext();
+  const { user, setUser } = useAppContext();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -58,7 +58,14 @@ export const Header: React.FC = () => {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
+              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                Dashboard
+              </Link>
+              {user?.accountType === 'owner' &&
+                <Link to="/create-property" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Create Property
+                </Link>
+              }
             </div>
           </div>
           <div className="flex items-center">
@@ -97,7 +104,14 @@ export const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden" id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-            <Link to="/dashboard" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">Dashboard</Link>
+            <Link to="/dashboard" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+              Dashboard
+            </Link>
+            {user?.accountType === 'owner' &&
+              <Link to="/create-property" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                Create Property
+              </Link>
+            }
           </div>
         </div>
       )}

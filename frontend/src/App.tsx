@@ -7,6 +7,7 @@ import { PropertyDetail } from "@/pages/PropertyDetail"
 import { useAppContext } from "@/context/AppContext"
 import { Header } from "@/components/Header"
 import { PrivateRoute } from "@/pages/PrivateRoute"
+import { CreateProperty } from "./pages/CreateProperty"
 
 function App() {
   const { user } = useAppContext();
@@ -26,6 +27,7 @@ function App() {
         <Route element={<PrivateRoute />} >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/:propertyId" element={<PropertyDetail />} />
+          <Route path="/dashboard/create-property" element={<CreateProperty />} />
         </Route>
       </Routes>
     </BrowserRouter>

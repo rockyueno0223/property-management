@@ -28,9 +28,9 @@ const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
     const property = property_model_1.default.createProperty({
         title,
-        description,
+        description: description || null,
         rent,
-        imageUrl,
+        imageUrl: imageUrl || null,
         street,
         city,
         province,

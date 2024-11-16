@@ -1,9 +1,9 @@
 export type Property = {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   rent: number;
-  imageUrl: string;
+  imageUrl: string | null;
   street: string;
   city: string;
   province: string;

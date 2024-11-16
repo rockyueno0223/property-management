@@ -28,9 +28,9 @@ const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
   } = req.body;
   const property = propertyModel.createProperty({
     title,
-    description,
+    description: description || null,
     rent,
-    imageUrl,
+    imageUrl: imageUrl || null,
     street,
     city,
     province,
