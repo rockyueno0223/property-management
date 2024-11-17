@@ -5,14 +5,14 @@ import { Property } from '../../../shared/types/property';
 // Get properties
 const getProperties = (req: Request, res: Response) => {
   const properties = propertyModel.findAll();
-  res.json(properties);
+  res.json({ properties, success: true });
 };
 
 // Add property
 const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
   const userId = req.signedCookies.userId;
   if (!userId) {
-    res.status(401).json({ message: 'User not authenticated' });
+    res.status(401).json({ success: false, message: 'User not authenticated' });
     return;
   }
 
@@ -51,7 +51,7 @@ const getPropertyById = (req: Request<{ id: string }>, res: Response) => {
     res.status(404).json({ success: false, message: 'Property not found' });
     return;
   }
-  res.json(property);
+  res.json({ property, success: true });
 };
 
 // Update property by id
@@ -78,17 +78,18 @@ const updatePropertyById = async (req: Request<{ id: string }, {}, Partial<Prope
     province,
     postalCode
   } = req.body;
-  const updatedProperty = propertyModel.editProperty(id, {
-    title,
-    description,
-    rent,
-    imageUrl,
-    street,
-    city,
-    province,
-    postalCode
-  });
-  res.status(200).json(updatedProperty);
+  const updatedData: Partial<Property> = {
+    title: title || property.title,
+    description: description || null,
+    rent: rent !== undefined ? rent : property.rent,
+    imageUrl: imageUrl || null,
+    street: street || property.street,
+    city: city || property.city,
+    province: province || property.province,
+    postalCode: postalCode || property.postalCode,
+  };
+  const updatedProperty = propertyModel.editProperty(id, updatedData);
+  res.status(200).json({ updatedProperty, success: true });
 };
 
 // Delete property by id
@@ -99,7 +100,7 @@ const deletePropertyById = (req: Request<{ id: string }>, res: Response) => {
     res.status(404).json({ success: false, message: 'Property not found' });
     return;
   }
-  res.status(200).send('Property deleted');
+  res.status(200).json({ success: true, message: 'Property deleted' });
 };
 
 export default {

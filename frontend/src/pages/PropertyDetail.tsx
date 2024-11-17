@@ -19,7 +19,7 @@ export const PropertyDetail = () => {
           console.error(data.message);
           return;
         }
-        setProperty(data);
+        setProperty(data.property);
       } catch (error) {
         console.error((error as Error).message);
       }
@@ -52,7 +52,7 @@ export const PropertyDetail = () => {
     <div className="w-full max-w-screen-md mx-auto p-3">
       <h1 className="text-lg font-semibold my-3">{property?.title}</h1>
       <img
-        src={property?.imageUrl}
+        src={property?.imageUrl || ''}
         alt={property?.title}
         className="w-full h-auto"
       />

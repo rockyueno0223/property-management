@@ -16,13 +16,13 @@ const property_model_1 = __importDefault(require("../models/property.model"));
 // Get properties
 const getProperties = (req, res) => {
     const properties = property_model_1.default.findAll();
-    res.json(properties);
+    res.json({ properties, success: true });
 };
 // Add property
 const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.signedCookies.userId;
     if (!userId) {
-        res.status(401).json({ message: 'User not authenticated' });
+        res.status(401).json({ success: false, message: 'User not authenticated' });
         return;
     }
     const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
@@ -49,7 +49,7 @@ const getPropertyById = (req, res) => {
         res.status(404).json({ success: false, message: 'Property not found' });
         return;
     }
-    res.json(property);
+    res.json({ property, success: true });
 };
 // Update property by id
 const updatePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,17 +65,18 @@ const updatePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, funct
         return;
     }
     const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
-    const updatedProperty = property_model_1.default.editProperty(id, {
-        title,
-        description,
-        rent,
-        imageUrl,
-        street,
-        city,
-        province,
-        postalCode
-    });
-    res.status(200).json(updatedProperty);
+    const updatedData = {
+        title: title || property.title,
+        description: description || null,
+        rent: rent !== undefined ? rent : property.rent,
+        imageUrl: imageUrl || null,
+        street: street || property.street,
+        city: city || property.city,
+        province: province || property.province,
+        postalCode: postalCode || property.postalCode,
+    };
+    const updatedProperty = property_model_1.default.editProperty(id, updatedData);
+    res.status(200).json({ updatedProperty, success: true });
 });
 // Delete property by id
 const deletePropertyById = (req, res) => {
@@ -85,7 +86,7 @@ const deletePropertyById = (req, res) => {
         res.status(404).json({ success: false, message: 'Property not found' });
         return;
     }
-    res.status(200).send('Property deleted');
+    res.status(200).json({ success: true, message: 'Property deleted' });
 };
 exports.default = {
     getProperties,

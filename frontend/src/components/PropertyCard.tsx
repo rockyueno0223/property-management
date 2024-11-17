@@ -13,7 +13,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   return (
     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 border">
       <img
-        src={property.imageUrl}
+        src={property.imageUrl || ''}
         alt={property.title}
         className="w-full h-48 sm:h-40 object-cover"
       />
@@ -24,7 +24,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             <p className="text-red-500 font-semibold">${property.rent}</p>
             <p className="text-sm text-gray-500">{property.city} {property.province}</p>
           </div>
-          <Link to={`/dashboard/${property.id}`}>
+          <Link to={user?.accountType === 'resident' ? `/dashboard/${property.id}` : `/dashboard/${property.id}/edit`}>
             <Button>
               {user?.accountType === 'resident' ? 'Show detail' : 'Update'}
             </Button>

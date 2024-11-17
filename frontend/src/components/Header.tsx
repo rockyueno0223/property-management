@@ -62,7 +62,7 @@ export const Header: React.FC = () => {
                 Dashboard
               </Link>
               {user?.accountType === 'owner' &&
-                <Link to="/create-property" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                <Link to="/dashboard/create-property" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                   Create Property
                 </Link>
               }
@@ -108,7 +108,7 @@ export const Header: React.FC = () => {
               Dashboard
             </Link>
             {user?.accountType === 'owner' &&
-              <Link to="/create-property" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+              <Link to="/dashboard/create-property" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
                 Create Property
               </Link>
             }

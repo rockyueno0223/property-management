@@ -16,10 +16,10 @@ export const Dashboard = () => {
           return;
         }
         if (user?.accountType === 'owner') {
-          const filteredData = data.filter((property: Property) => property.ownerId === user?.id);
+          const filteredData = data.properties.filter((property: Property) => property.ownerId === user?.id);
           setProperties(filteredData);
         } else {
-          setProperties(data);
+          setProperties(data.properties);
         }
       } catch (error) {
         console.error((error as Error).message);
