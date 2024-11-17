@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { MapComponent } from "@/components/MapComponent";
 
 const propertySchema = z.object({
@@ -100,7 +102,7 @@ export const UpdateProperty = () => {
       });
       const data = await res.json();
       if (data.success) {
-        navigate("/dashboard");
+        toast('Property has been updated');
       } else {
         console.error(data.message);
       }
@@ -118,7 +120,8 @@ export const UpdateProperty = () => {
       });
       const data = await res.json();
       if (data.success) {
-        navigate("/dashboard");
+        toast('Property has been deleted');
+        setTimeout(() => navigate("/dashboard"), 2000);
       } else {
         console.error(data.message);
       }
@@ -274,8 +277,17 @@ export const UpdateProperty = () => {
           >
             Delete Property
           </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/dashboard')}
+            className="w-full mt-4"
+          >
+            Back to Dashboard
+          </Button>
         </div>
       </form>
+      <Toaster />
     </Form>
   );
 };

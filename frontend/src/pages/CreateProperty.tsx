@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import { useEffect } from "react";
@@ -63,7 +65,8 @@ export const CreateProperty = () => {
       });
       const data = await res.json();
       if (data.success) {
-        navigate("/dashboard");
+        toast('Property has been created');
+        setTimeout(() => navigate("/dashboard"), 2000);
       } else {
         console.error(data.message);
       }
@@ -208,11 +211,22 @@ export const CreateProperty = () => {
           )}
         />
 
-        {/* Submit Button */}
-        <Button type="submit" className="w-full">
-          Create Property
-        </Button>
+        {/* Buttons */}
+        <div className="flex flex-col gap-2">
+          <Button type="submit" className="w-full">
+            Create Property
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/dashboard')}
+            className="w-full mt-4"
+          >
+            Back to Dashboard
+          </Button>
+        </div>
       </form>
+      <Toaster />
     </Form>
   );
 };

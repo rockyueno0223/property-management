@@ -11,7 +11,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { useAppContext } from "@/context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   username: z.string()
@@ -23,6 +26,7 @@ const formSchema = z.object({
 });
 
 export const UserProfile = () => {
+  const navigate = useNavigate();
   const { user, setUser } = useAppContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,6 +48,7 @@ export const UserProfile = () => {
       const data = await res.json();
       if (data.success) {
         setUser(data.user);
+        toast('Profile has been updated');
       } else {
         console.error(data.message);
       }
@@ -89,10 +94,22 @@ export const UserProfile = () => {
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Update Profile
-        </Button>
+        {/* Buttons */}
+        <div className="flex flex-col gap-2">
+          <Button type="submit" className="w-full">
+            Update Profile
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate('/dashboard')}
+            className="w-full mt-4"
+          >
+            Back to Dashboard
+          </Button>
+        </div>
       </form>
+      <Toaster />
     </Form>
   );
 };
