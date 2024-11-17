@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MapComponent } from "@/components/MapComponent";
 
 const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -107,6 +108,24 @@ export const UpdateProperty = () => {
       console.error("Failed to update property:", error);
     }
   };
+
+  const onDelete = async () => {
+    try {
+      const res = await fetch(`http://localhost:3500/api/properties/${propertyId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.success) {
+        navigate("/dashboard");
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Failed to delete property:", error);
+    }
+  }
 
   return (
     <Form {...form}>
@@ -240,10 +259,22 @@ export const UpdateProperty = () => {
           )}
         />
 
-        {/* Submit Button */}
-        <Button type="submit" className="w-full">
-          Update Property
-        </Button>
+        <MapComponent address={`${property?.street}, ${property?.city}, ${property?.province}`} />
+
+        {/* Buttons */}
+        <div className="flex flex-col gap-2">
+          <Button type="submit" className="w-full">
+            Update Property
+          </Button>
+          <Button
+            type="button"
+            onClick={onDelete}
+            variant="destructive"
+            className="w-full"
+          >
+            Delete Property
+          </Button>
+        </div>
       </form>
     </Form>
   );
