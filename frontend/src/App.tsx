@@ -9,6 +9,7 @@ import { Header } from "@/components/Header"
 import { PrivateRoute } from "@/pages/PrivateRoute"
 import { CreateProperty } from "@/pages/CreateProperty"
 import { UpdateProperty } from "@/pages/UpdateProperty"
+import { UserProfile } from "@/pages/UserProfile"
 
 function App() {
   const { user } = useAppContext();
@@ -26,8 +27,14 @@ function App() {
 
         {/* Only when authenticated */}
         <Route element={<PrivateRoute />} >
+          {/* All users */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<UserProfile />} />
+
+          {/* Only residents */}
           <Route path="/dashboard/:propertyId" element={<PropertyDetail />} />
+
+          {/* Only owners */}
           <Route path="/dashboard/create-property" element={<CreateProperty />} />
           <Route path="/dashboard/:propertyId/edit" element={<UpdateProperty />} />
         </Route>

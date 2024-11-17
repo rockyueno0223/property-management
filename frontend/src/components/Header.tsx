@@ -66,6 +66,9 @@ export const Header: React.FC = () => {
                   Create Property
                 </Link>
               }
+              <Link to="/profile" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                Profile
+              </Link>
             </div>
           </div>
           <div className="flex items-center">
@@ -112,6 +115,9 @@ export const Header: React.FC = () => {
                 Create Property
               </Link>
             }
+            <Link to="/profile" className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+              Profile
+            </Link>
           </div>
         </div>
       )}
