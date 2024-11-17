@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "@/context/AppContext";
+import { useEffect } from "react";
 
 const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -27,6 +29,15 @@ const propertySchema = z.object({
 
 export const CreateProperty = () => {
   const navigate = useNavigate();
+
+  const { user } = useAppContext();
+
+  useEffect(() => {
+    if (user?.accountType !== 'owner') {
+      // Redirect unauthorized users
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const form = useForm<z.infer<typeof propertySchema>>({
     resolver: zodResolver(propertySchema),

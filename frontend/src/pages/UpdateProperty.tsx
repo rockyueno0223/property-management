@@ -31,11 +31,18 @@ export const UpdateProperty = () => {
   const navigate = useNavigate();
 
   const { propertyId } = useParams<{ propertyId: string }>();
-  const { properties } = useAppContext();
+  const { user, properties } = useAppContext();
 
   const property = properties.find((prop) => prop.id === propertyId);
 
   const [formValues, setFormValues] = useState<z.infer<typeof propertySchema> | null>(null);
+
+  useEffect(() => {
+    if (!property || user?.id !== property.ownerId) {
+      // Redirect unauthorized users
+      navigate("/dashboard");
+    }
+  }, [property, user, navigate]);
 
   const form = useForm<z.infer<typeof propertySchema>>({
     resolver: zodResolver(propertySchema),
