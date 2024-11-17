@@ -1,28 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Moon, Sun, LogOut } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
+import { useThemeContext } from '@/context/ThemeContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
+
   const { user, setUser } = useAppContext();
+  const { isDarkMode, toggleTheme } = useThemeContext();
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const isDark = localStorage.getItem('theme') === 'dark' ||
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setIsDarkMode(isDark);
-    document.documentElement.classList.toggle('dark', isDark);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode ? 'dark' : 'light';
-    setIsDarkMode(!isDarkMode);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', !isDarkMode);
-  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -48,7 +36,7 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
