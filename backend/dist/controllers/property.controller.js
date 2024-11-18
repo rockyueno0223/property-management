@@ -21,7 +21,6 @@ const getProperties = (req, res) => {
 };
 // Add property
 const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('File', req.file);
     const userId = req.signedCookies.userId;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated' });

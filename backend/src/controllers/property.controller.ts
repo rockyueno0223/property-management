@@ -14,8 +14,6 @@ const getProperties = (req: Request, res: Response) => {
 
 // Add property
 const addProperty = async (req: MulterRequest, res: Response) => {
-  console.log('File', req.file);
-
   const userId = req.signedCookies.userId;
   if (!userId) {
     res.status(401).json({ success: false, message: 'User not authenticated' });

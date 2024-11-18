@@ -67,7 +67,7 @@ export const UpdateProperty = () => {
       setFormValues({
         title: property.title,
         description: property.description || "",
-        rent: property.rent,
+        rent: Number(property.rent),
         imageUrl: property.imageUrl || "",
         street: property.street,
         city: property.city,
@@ -77,7 +77,7 @@ export const UpdateProperty = () => {
       form.reset({
         title: property.title,
         description: property.description || "",
-        rent: property.rent,
+        rent: Number(property.rent),
         imageUrl: property.imageUrl || "",
         street: property.street,
         city: property.city,
