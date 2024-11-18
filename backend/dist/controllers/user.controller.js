@@ -43,8 +43,8 @@ const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // Login user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
-    const user = user_model_1.default.findByUsername(username);
+    const { email, password } = req.body;
+    const user = user_model_1.default.findByEmail(email);
     if (!user) {
         res.status(404).json({ success: false, message: 'User not found' });
         return;

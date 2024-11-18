@@ -35,6 +35,15 @@ class UserModel {
         return undefined;
     }
     ;
+    // Get user by email
+    findByEmail(email) {
+        const user = this.users.find(user => user.email === email);
+        if (user) {
+            return user;
+        }
+        return undefined;
+    }
+    ;
     // Create user
     createUser(newUser) {
         const user = Object.assign({ id: (0, uuid_1.v4)() }, newUser);

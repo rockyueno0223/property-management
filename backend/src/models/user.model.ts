@@ -33,6 +33,15 @@ class UserModel {
     return undefined;
   };
 
+  // Get user by email
+  findByEmail(email: string): User | undefined {
+    const user = this.users.find(user => user.email === email);
+    if (user) {
+      return user;
+    }
+    return undefined;
+  };
+
   // Create user
   createUser(newUser: Omit<User, 'id'>): User {
     const user = {

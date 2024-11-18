@@ -16,9 +16,8 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAppContext } from "@/context/AppContext"
 
 const formSchema = z.object({
-  username: z.string()
-    .min(2, { message: "Username must be at least 2 characters" })
-    .max(50, { message: "Username must be at most 50 characters" }),
+  email: z.string()
+    .email({ message: "Invalid email address" }),
 
   password: z.string()
     .min(6, { message: "Password must be at least 6 characters" })
@@ -32,7 +31,7 @@ export const Signin = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   })
@@ -64,15 +63,15 @@ export const Signin = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-3xl space-y-8">
 
-          {/* Username field */}
+          {/* Email field */}
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Username" {...field} />
+                  <Input type="email" placeholder="you@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -34,8 +34,8 @@ const addUser = async (req: Request<{}, {}, User>, res: Response) => {
 
 // Login user
 const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
-  const { username, password } = req.body;
-  const user = userModel.findByUsername(username);
+  const { email, password } = req.body;
+  const user = userModel.findByEmail(email);
   if (!user) {
     res.status(404).json({ success: false, message: 'User not found' });
     return;

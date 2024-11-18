@@ -40,7 +40,7 @@ export const PropertyDetail = () => {
             console.error(data.message);
             return;
           }
-          setOwnerData(data);
+          setOwnerData(data.user);
         } catch (error) {
           console.error((error as Error).message);
         }
