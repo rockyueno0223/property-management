@@ -22,6 +22,11 @@ const getUsers = (req, res) => {
 // Add user
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, email, password, accountType } = req.body;
+    const emailExists = user_model_1.default.findAll().some((user) => user.email === email);
+    if (emailExists) {
+        res.status(400).json({ success: false, message: 'Email already in use' });
+        return;
+    }
     const hashedPassword = yield (0, hash_util_1.hashed)(password);
     const user = user_model_1.default.createUser({ username, email, password: hashedPassword, accountType });
     if (user) {
@@ -96,6 +101,11 @@ const getUserById = (req, res) => {
 const updateUserById = (req, res) => {
     const { id } = req.params;
     const { username, email } = req.body;
+    const emailExists = user_model_1.default.findAll().some((user) => user.email === email);
+    if (emailExists) {
+        res.status(400).json({ success: false, message: 'Email already in use' });
+        return;
+    }
     const user = user_model_1.default.editUser(id, { username, email });
     if (!user) {
         res.status(404).json({ success: false, message: "User not found" });
