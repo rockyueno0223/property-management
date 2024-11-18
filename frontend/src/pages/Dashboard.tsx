@@ -50,17 +50,21 @@ export const Dashboard = () => {
     }
 
     // Filter by province
-  if (province !== "All") {
-    sortedAndFiltered = sortedAndFiltered.filter((property) => {
-      const propertyProvince = reverseProvinceMapping[property.province] || property.province;
-      return propertyProvince.toLowerCase() === province.toLowerCase();
-    });
-  }
+    if (province !== "All") {
+      sortedAndFiltered = sortedAndFiltered.filter((property) => {
+        const propertyProvince = reverseProvinceMapping[property.province] || property.province;
+        return propertyProvince.toLowerCase() === province.toLowerCase();
+      });
+    }
 
     // Sort by selected key
     sortedAndFiltered.sort((a, b) => {
-      if (sortKey === "rent" || sortKey === "createdAt") {
-        return a[sortKey] < b[sortKey] ? -1 : 1;
+      if (sortKey === "rent") {
+        // Ascending sort for rent
+        return a[sortKey] - b[sortKey];
+      } else if (sortKey === "createdAt" || sortKey === "updatedAt") {
+        // Descending sort for dates
+        return new Date(b[sortKey]).getTime() - new Date(a[sortKey]).getTime();
       }
       return 0;
     });
@@ -79,6 +83,7 @@ export const Dashboard = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="createdAt">Created At</SelectItem>
+            <SelectItem value="updatedAt">Updated At</SelectItem>
             <SelectItem value="rent">Rent</SelectItem>
           </SelectContent>
         </Select>

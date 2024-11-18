@@ -10,4 +10,5 @@ export type Property = {
   postalCode: string;
   ownerId: string;
   createdAt: string;
+  updatedAt: string;
 }

@@ -15,7 +15,8 @@ class PropertyModel {
                 province: "BC",
                 postalCode: "V6Z AAA",
                 ownerId: "aaa",
-                createdAt: "2024-6-30"
+                createdAt: "2024-6-30",
+                updatedAt: "2024-5-30",
             },
             {
                 id: "2",
@@ -28,7 +29,8 @@ class PropertyModel {
                 province: "BC",
                 postalCode: "V6Z BBB",
                 ownerId: "aaa",
-                createdAt: "2024-10-31"
+                createdAt: "2024-10-31",
+                updatedAt: "2023-12-30",
             },
             {
                 id: "3",
@@ -41,7 +43,8 @@ class PropertyModel {
                 province: "ON",
                 postalCode: "HHH III",
                 ownerId: "aaa",
-                createdAt: "2024-1-1"
+                createdAt: "2024-1-1",
+                updatedAt: "2024-4-30",
             }
         ];
     }
@@ -69,7 +72,7 @@ class PropertyModel {
     // };
     // Create property
     createProperty(newProperty) {
-        const property = Object.assign({ id: (0, uuid_1.v4)(), createdAt: new Date().toISOString() }, newProperty);
+        const property = Object.assign({ id: (0, uuid_1.v4)(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, newProperty);
         this.properties.push(property);
         return property;
     }
@@ -83,6 +86,7 @@ class PropertyModel {
         const updatedProperty = {
             id: this.properties[index].id,
             createdAt: this.properties[index].createdAt,
+            updatedAt: new Date().toISOString(),
             title: (_a = newData.title) !== null && _a !== void 0 ? _a : this.properties[index].title,
             description: (_b = newData.description) !== null && _b !== void 0 ? _b : this.properties[index].description,
             rent: (_c = newData.rent) !== null && _c !== void 0 ? _c : this.properties[index].rent,
