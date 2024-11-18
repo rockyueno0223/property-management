@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import propertyModel from '../models/property.model';
 import { Property } from '../../../shared/types/property';
 import { uploadImage } from '../utils/cloudinary.util';
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
 
 // Get properties
 const getProperties = (req: Request, res: Response) => {
@@ -10,7 +13,9 @@ const getProperties = (req: Request, res: Response) => {
 };
 
 // Add property
-const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
+const addProperty = async (req: MulterRequest, res: Response) => {
+  console.log('File', req.file);
+
   const userId = req.signedCookies.userId;
   if (!userId) {
     res.status(401).json({ success: false, message: 'User not authenticated' });
@@ -21,20 +26,20 @@ const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
     title,
     description,
     rent,
-    imageUrl,
     street,
     city,
     province,
     postalCode
   } = req.body;
+  let imageUrl: string | null = null;
 
   // upload image to cloudinary
-  let uploadedImageUrl = "";
-  if (imageUrl) {
+  if (req.file) {
     try {
-      uploadedImageUrl = await uploadImage(imageUrl, "property-management");
+      imageUrl = await uploadImage(req.file.path, "property-management");
     } catch (error) {
-      return res.status(500).json({ success: false, message: (error as Error).message });
+      res.status(500).json({ success: false, message: (error as Error).message });
+      return;
     }
   }
 
@@ -42,7 +47,7 @@ const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
     title,
     description: description || null,
     rent,
-    imageUrl: uploadedImageUrl || null,
+    imageUrl: imageUrl || null,
     street,
     city,
     province,

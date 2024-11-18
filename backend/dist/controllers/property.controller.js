@@ -21,27 +21,29 @@ const getProperties = (req, res) => {
 };
 // Add property
 const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('File', req.file);
     const userId = req.signedCookies.userId;
     if (!userId) {
         res.status(401).json({ success: false, message: 'User not authenticated' });
         return;
     }
-    const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
+    const { title, description, rent, street, city, province, postalCode } = req.body;
+    let imageUrl = null;
     // upload image to cloudinary
-    let uploadedImageUrl = "";
-    if (imageUrl) {
+    if (req.file) {
         try {
-            uploadedImageUrl = yield (0, cloudinary_util_1.uploadImage)(imageUrl, "property-management");
+            imageUrl = yield (0, cloudinary_util_1.uploadImage)(req.file.path, "property-management");
         }
         catch (error) {
-            return res.status(500).json({ success: false, message: error.message });
+            res.status(500).json({ success: false, message: error.message });
+            return;
         }
     }
     const property = property_model_1.default.createProperty({
         title,
         description: description || null,
         rent,
-        imageUrl: uploadedImageUrl || null,
+        imageUrl: imageUrl || null,
         street,
         city,
         province,

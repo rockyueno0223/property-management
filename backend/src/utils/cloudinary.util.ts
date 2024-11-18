@@ -8,6 +8,10 @@ export const uploadImage = async (imagePath: string, folder: string): Promise<st
       unique_filename: false,
       transformation: [
         {
+          width: 1200,
+          crop: "scale",
+        },
+        {
           quality: "auto",
           fetch_format: "auto"
         },

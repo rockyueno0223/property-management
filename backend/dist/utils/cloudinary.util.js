@@ -22,6 +22,10 @@ const uploadImage = (imagePath, folder) => __awaiter(void 0, void 0, void 0, fun
             unique_filename: false,
             transformation: [
                 {
+                    width: 1200,
+                    crop: "scale",
+                },
+                {
                     quality: "auto",
                     fetch_format: "auto"
                 },

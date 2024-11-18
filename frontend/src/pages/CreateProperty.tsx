@@ -16,14 +16,14 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ProvinceSelect } from "@/components/ProvinceSelect";
 
 const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().optional(),
   rent: z.number().positive({ message: "Rent must be a positive number" }),
-  imageUrl: z.string().url({ message: "Must be a valid URL" }).optional().or(z.literal("")),
+  image: z.any().optional(),
   street: z.string().min(3, { message: "Street must be at least 3 characters" }),
   city: z.string().min(2, { message: "City must be at least 2 characters" }),
   province: z.string().min(2, { message: "Province must be at least 2 characters" }),
@@ -34,6 +34,7 @@ export const CreateProperty = () => {
   const navigate = useNavigate();
 
   const { user } = useAppContext();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user?.accountType !== 'owner') {
@@ -48,7 +49,6 @@ export const CreateProperty = () => {
       title: "",
       description: "",
       rent: 0,
-      imageUrl: "",
       street: "",
       city: "",
       province: "",
@@ -57,12 +57,23 @@ export const CreateProperty = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof propertySchema>) => {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description || "");
+    formData.append("rent", String(values.rent));
+    formData.append("street", values.street);
+    formData.append("city", values.city);
+    formData.append("province", values.province);
+    formData.append("postalCode", values.postalCode);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
     try {
       const res = await fetch("http://localhost:3500/api/properties/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(values),
+        body: formData,
       });
       const data = await res.json();
       if (data.success) {
@@ -138,19 +149,21 @@ export const CreateProperty = () => {
         />
 
         {/* Image URL Field */}
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="Image URL" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormItem>
+          <FormLabel>Image</FormLabel>
+          <FormControl>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files) {
+                  setImageFile(e.target.files[0]);
+                }
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
 
         {/* Street Field */}
         <FormField
