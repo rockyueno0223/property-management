@@ -9,6 +9,7 @@ import { ProvinceSelect } from '@/components/ProvinceSelect';
 
 export const Dashboard = () => {
   const { user, properties, setProperties } = useAppContext();
+
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortKey, setSortKey] = useState<string>("createdAt");
   const [city, setCity] = useState<string>("");
@@ -107,11 +108,17 @@ export const Dashboard = () => {
       </div>
 
       {/* Property Cards */}
-      <div className="w-full flex flex-col sm:flex-row gap-3">
-        {filteredProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
-        ))}
-      </div>
+      {filteredProperties.length > 0 ? (
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filteredProperties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      ) : (
+        <div className="w-full flex justify-center">
+          <span className='mt-12 text-2xl font-semibold'>No Properties Found</span>
+        </div>
+      )}
     </div>
   );
 };

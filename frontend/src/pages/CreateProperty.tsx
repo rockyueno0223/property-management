@@ -80,7 +80,7 @@ export const CreateProperty = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 max-w-lg mx-auto p-4 border rounded-lg shadow-sm"
+        className="space-y-6 max-w-lg mx-auto my-6 p-4 border rounded-lg shadow-sm"
       >
         {/* Title Field */}
         <FormField

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Property } from "../../../shared/types/property";
 import { User } from "../../../shared/types/user";
 import { MapComponent } from "@/components/MapComponent";
+import { Button } from "@/components/ui/button";
 
 export const PropertyDetail = () => {
+  const navigate = useNavigate();
   const { propertyId } = useParams<{ propertyId: string }>();
 
   const [property, setProperty] = useState<Property | null>(null);
@@ -50,25 +52,57 @@ export const PropertyDetail = () => {
 
   return (
     <div className="w-full max-w-screen-md mx-auto p-3">
-      <h1 className="text-lg font-semibold my-3">{property?.title}</h1>
+      <div className="my-3">
+        <h1 className="text-lg font-semibold">{property?.title}</h1>
+        <p className="w-full text-right text-sm text-gray-500 dark:text-gray-400">
+          {property?.createdAt
+            ? new Date(property.createdAt).toLocaleString('en-CA', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }).replace(',', '').replace(/-/g, '/')
+            : 'N/A'
+          }
+        </p>
+      </div>
       <img
         src={property?.imageUrl || ''}
         alt={property?.title}
         className="w-full h-auto"
       />
-      <div className="p-2">
-        <p>{property?.description}</p>
-        <p>
-          Rent: <span className="text-lg text-red-500 font-semibold">${property?.rent}</span>
+      <div className="py-2">
+        <p className="my-2">{property?.description}</p>
+        <p className="flex gap-2">
+          <span className="text-lg font-semibold">Rent</span>
+          <span className="text-lg text-red-500 font-semibold">${property?.rent}</span>
         </p>
-        <p>Address: {property?.street}, {property?.city}, {property?.province}</p>
-        <p>
-          Owner: {ownerData?.username}<br/>
-          {ownerData?.email}
+        <p className="flex items-end gap-2">
+          <span className="text-lg font-semibold">Address</span>
+          {property?.street}, {property?.city}, {property?.province}
         </p>
-        <p>{property?.createdAt}</p>
       </div>
       <MapComponent address={`${property?.street}, ${property?.city}, ${property?.province}`} />
+      <div className="py-2">
+        <p className="flex items-end gap-2">
+          <span className="text-lg font-semibold">Owner</span>
+          {ownerData?.username}
+        </p>
+        <p className="flex items-end gap-2">
+          <span className="text-lg font-semibold">Email</span>
+          {ownerData?.email}
+        </p>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => navigate('/dashboard')}
+          className="w-full mt-3"
+        >
+          Back to Dashboard
+        </Button>
+      </div>
     </div>
   )
 }
