@@ -1,13 +1,21 @@
-import { useEffect } from 'react';
-import { Property } from '../../../shared/types/property'
+import { useEffect, useState } from 'react';
+import { Property } from '../../../shared/types/property';
 import { PropertyCard } from '@/components/PropertyCard';
 import { useAppContext } from '@/context/AppContext';
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { provinceMapping, reverseProvinceMapping } from "@/constants/provinceMapping";
 
 export const Dashboard = () => {
   const { user, properties, setProperties } = useAppContext();
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [sortKey, setSortKey] = useState<string>("createdAt");
+  const [city, setCity] = useState<string>("");
+  const [province, setProvince] = useState<string>("All");
 
   useEffect(() => {
-    const fetchProperty = async () => {
+    // Fetch Properties
+    const fetchProperties = async () => {
       try {
         const res = await fetch('http://localhost:3500/api/properties');
         const data = await res.json();
@@ -18,21 +26,93 @@ export const Dashboard = () => {
         if (user?.accountType === 'owner') {
           const filteredData = data.properties.filter((property: Property) => property.ownerId === user?.id);
           setProperties(filteredData);
+          setFilteredProperties(filteredData);
         } else {
           setProperties(data.properties);
+          setFilteredProperties(data.properties);
         }
       } catch (error) {
         console.error((error as Error).message);
       }
-    }
-    fetchProperty();
+    };
+    fetchProperties();
   }, [setProperties, user]);
 
+  useEffect(() => {
+    let sortedAndFiltered = [...properties];
+
+    // Filter by city
+    if (city.trim()) {
+      sortedAndFiltered = sortedAndFiltered.filter((property) =>
+        property.city.toLowerCase().includes(city.toLowerCase())
+      );
+    }
+
+    // Filter by province
+  if (province !== "All") {
+    sortedAndFiltered = sortedAndFiltered.filter((property) => {
+      const propertyProvince = reverseProvinceMapping[property.province] || property.province;
+      return propertyProvince.toLowerCase() === province.toLowerCase();
+    });
+  }
+
+    // Sort by selected key
+    sortedAndFiltered.sort((a, b) => {
+      if (sortKey === "rent" || sortKey === "createdAt") {
+        return a[sortKey] < b[sortKey] ? -1 : 1;
+      }
+      return 0;
+    });
+
+    setFilteredProperties(sortedAndFiltered);
+  }, [city, province, sortKey, properties]);
+
   return (
-    <div className="w-full max-w-screen-xl mx-auto p-3 flex flex-col sm:flex-row gap-3">
-      {properties.map((property: Property) => (
-        <PropertyCard key={property.id} property={property} />
-      ))}
+    <div className="w-full max-w-screen-xl mx-auto p-3 flex flex-col space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between sm:justify-end items-center gap-3">
+
+        {/* Sort Dropdown */}
+        <Select onValueChange={setSortKey} value={sortKey}>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createdAt">Created At</SelectItem>
+            <SelectItem value="rent">Rent</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* City Input */}
+        <Input
+          type="text"
+          placeholder="Filter by city"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          className="w-full sm:w-48"
+        />
+
+        {/* Province Dropdown */}
+        <Select onValueChange={setProvince} value={province}>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Filter by province" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="All">All Provinces</SelectItem>
+            {Object.entries(provinceMapping).map(([abbr, name]) => (
+              <SelectItem key={abbr} value={abbr}>
+                {name} ({abbr})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Property Cards */}
+      <div className="w-full flex flex-col sm:flex-row gap-3">
+        {filteredProperties.map((property) => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
+      </div>
     </div>
-  )
-}
+  );
+};

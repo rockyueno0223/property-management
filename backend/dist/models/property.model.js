@@ -29,6 +29,19 @@ class PropertyModel {
                 postalCode: "V6Z BBB",
                 ownerId: "aaa",
                 createdAt: "2024-10-31"
+            },
+            {
+                id: "3",
+                title: "title3",
+                description: "desc3",
+                rent: 800,
+                imageUrl: "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?cs=srgb&dl=pexels-binyaminmellish-106399.jpg&fm=jpg",
+                street: "456 Main St",
+                city: "Toronto",
+                province: "ON",
+                postalCode: "HHH III",
+                ownerId: "aaa",
+                createdAt: "2024-1-1"
             }
         ];
     }
