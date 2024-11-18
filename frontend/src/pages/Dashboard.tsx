@@ -4,7 +4,8 @@ import { PropertyCard } from '@/components/PropertyCard';
 import { useAppContext } from '@/context/AppContext';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { provinceMapping, reverseProvinceMapping } from "@/constants/provinceMapping";
+import { reverseProvinceMapping } from "@/constants/provinceMapping";
+import { ProvinceSelect } from '@/components/ProvinceSelect';
 
 export const Dashboard = () => {
   const { user, properties, setProperties } = useAppContext();
@@ -91,20 +92,13 @@ export const Dashboard = () => {
           className="w-full sm:w-48"
         />
 
-        {/* Province Dropdown */}
-        <Select onValueChange={setProvince} value={province}>
-          <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Filter by province" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All Provinces</SelectItem>
-            {Object.entries(provinceMapping).map(([abbr, name]) => (
-              <SelectItem key={abbr} value={abbr}>
-                {name} ({abbr})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* Province Select */}
+        <ProvinceSelect
+          value={province}
+          className="w-full sm:w-48"
+          onChange={setProvince}
+          hasAll={true}
+        />
       </div>
 
       {/* Property Cards */}

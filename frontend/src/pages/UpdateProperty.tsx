@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { MapComponent } from "@/components/MapComponent";
+import { ProvinceSelect } from "@/components/ProvinceSelect";
 
 const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -240,7 +241,10 @@ export const UpdateProperty = () => {
             <FormItem>
               <FormLabel>Province</FormLabel>
               <FormControl>
-                <Input placeholder="Province" {...field} />
+                <ProvinceSelect
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

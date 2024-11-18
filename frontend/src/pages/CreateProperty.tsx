@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 import { useEffect } from "react";
+import { ProvinceSelect } from "@/components/ProvinceSelect";
 
 const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -189,7 +190,10 @@ export const CreateProperty = () => {
             <FormItem>
               <FormLabel>Province</FormLabel>
               <FormControl>
-                <Input placeholder="Province" {...field} />
+                <ProvinceSelect
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
