@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const property_model_1 = __importDefault(require("../models/property.model"));
+const cloudinary_util_1 = require("../utils/cloudinary.util");
 // Get properties
 const getProperties = (req, res) => {
     const properties = property_model_1.default.findAll();
@@ -26,11 +27,21 @@ const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return;
     }
     const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
+    // upload image to cloudinary
+    let uploadedImageUrl = "";
+    if (imageUrl) {
+        try {
+            uploadedImageUrl = yield (0, cloudinary_util_1.uploadImage)(imageUrl, "property-management");
+        }
+        catch (error) {
+            return res.status(500).json({ success: false, message: error.message });
+        }
+    }
     const property = property_model_1.default.createProperty({
         title,
         description: description || null,
         rent,
-        imageUrl: imageUrl || null,
+        imageUrl: uploadedImageUrl || null,
         street,
         city,
         province,

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import propertyModel from '../models/property.model';
 import { Property } from '../../../shared/types/property';
+import { uploadImage } from '../utils/cloudinary.util';
 
 // Get properties
 const getProperties = (req: Request, res: Response) => {
@@ -26,11 +27,22 @@ const addProperty = async (req: Request<{}, {}, Property>, res: Response) => {
     province,
     postalCode
   } = req.body;
+
+  // upload image to cloudinary
+  let uploadedImageUrl = "";
+  if (imageUrl) {
+    try {
+      uploadedImageUrl = await uploadImage(imageUrl, "property-management");
+    } catch (error) {
+      return res.status(500).json({ success: false, message: (error as Error).message });
+    }
+  }
+
   const property = propertyModel.createProperty({
     title,
     description: description || null,
     rent,
-    imageUrl: imageUrl || null,
+    imageUrl: uploadedImageUrl || null,
     street,
     city,
     province,
