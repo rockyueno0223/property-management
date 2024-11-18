@@ -41,7 +41,9 @@ export const Header: React.FC = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0">
-              <span className="text-xl font-bold text-gray-800 dark:text-white">MyApp</span>
+              <span className="text-lg font-semibold font-serif text-gray-800 dark:text-white">
+                Property<br />Management
+              </span>
             </Link>
           </div>
           <div className="hidden md:block">
