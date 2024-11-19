@@ -80,9 +80,11 @@ export const CreateProperty = () => {
         toast('Property has been created');
         setTimeout(() => navigate("/dashboard"), 2000);
       } else {
+        toast.error(data.message);
         console.error(data.message);
       }
     } catch (error) {
+      toast.error('Something went wrong. Please try again.');
       console.error("Failed to create property:", error);
     }
   };

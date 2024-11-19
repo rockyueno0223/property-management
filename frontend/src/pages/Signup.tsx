@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Link, useNavigate } from "react-router-dom"
 import { useAppContext } from "@/context/AppContext"
+import { useState } from "react"
 
 const formSchema = z.object({
   username: z.string()
@@ -37,6 +38,8 @@ export const Signup = () => {
   const navigate = useNavigate();
   const { setUser } = useAppContext();
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,6 +51,7 @@ export const Signup = () => {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setErrorMessage(null);
     try {
       const res = await fetch('http://localhost:3500/api/users/sign-up', {
         method: 'POST',
@@ -56,15 +60,15 @@ export const Signup = () => {
         credentials: 'include',
       });
       const data = await res.json();
-      if (data.success === false) {
+      if (!res.ok || data.success === false) {
+        setErrorMessage(data.message);
         console.error(data.message);
         return;
       }
-      if (res.ok) {
-        setUser(data.user);
-        navigate('/dashboard');
-      }
+      setUser(data.user);
+      navigate('/dashboard');
     } catch (error) {
+      setErrorMessage('Something went wrong. Please try again.');
       console.error((error as Error).message);
     }
   }
@@ -154,6 +158,11 @@ export const Signup = () => {
               </FormItem>
             )}
           />
+
+          {/* Error message */}
+          {errorMessage &&
+            <p className="text-red-500">{errorMessage}</p>
+          }
 
           <Button type="submit">Submit</Button>
 

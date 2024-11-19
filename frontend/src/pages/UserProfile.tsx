@@ -50,9 +50,11 @@ export const UserProfile = () => {
         setUser(data.user);
         toast('Profile has been updated');
       } else {
+        toast.error(data.message);
         console.error(data.message);
       }
     } catch (error) {
+      toast.error('Something went wrong. Please try again.');
       console.error("Failed to update profile:", error);
     }
   };

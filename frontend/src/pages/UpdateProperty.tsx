@@ -105,9 +105,11 @@ export const UpdateProperty = () => {
       if (data.success) {
         toast('Property has been updated');
       } else {
+        toast.error(data.message);
         console.error(data.message);
       }
     } catch (error) {
+      toast.error('Something went wrong. Please try again.');
       console.error("Failed to update property:", error);
     }
   };
@@ -124,9 +126,11 @@ export const UpdateProperty = () => {
         toast('Property has been deleted');
         setTimeout(() => navigate("/dashboard"), 2000);
       } else {
+        toast.error(data.message);
         console.error(data.message);
       }
     } catch (error) {
+      toast.error('Something went wrong. Please try again.');
       console.error("Failed to delete property:", error);
     }
   }
