@@ -23,7 +23,6 @@ const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().optional(),
   rent: z.number().positive({ message: "Rent must be a positive number" }),
-  image: z.any().optional(),
   street: z.string().min(3, { message: "Street must be at least 3 characters" }),
   city: z.string().min(2, { message: "City must be at least 2 characters" }),
   province: z.string().min(2, { message: "Province must be at least 2 characters" }),

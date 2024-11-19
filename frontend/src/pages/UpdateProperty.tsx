@@ -24,7 +24,6 @@ const propertySchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().optional(),
   rent: z.number().positive({ message: "Rent must be a positive number" }),
-  imageUrl: z.string().url({ message: "Must be a valid URL" }).optional().or(z.literal("")),
   street: z.string().min(3, { message: "Street must be at least 3 characters" }),
   city: z.string().min(2, { message: "City must be at least 2 characters" }),
   province: z.string().min(2, { message: "Province must be at least 2 characters" }),
@@ -39,7 +38,7 @@ export const UpdateProperty = () => {
 
   const property = properties.find((prop) => prop.id === propertyId);
 
-  const [formValues, setFormValues] = useState<z.infer<typeof propertySchema> | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!property || user?.id !== property.ownerId) {
@@ -50,56 +49,47 @@ export const UpdateProperty = () => {
 
   const form = useForm<z.infer<typeof propertySchema>>({
     resolver: zodResolver(propertySchema),
-    defaultValues: formValues || {
-      title: "",
-      description: "",
-      rent: 0,
-      imageUrl: "",
-      street: "",
-      city: "",
-      province: "",
-      postalCode: "",
-    },
+    defaultValues: property
+      ? {
+          title: property.title,
+          description: property.description || "",
+          rent: Number(property.rent),
+          street: property.street,
+          city: property.city,
+          province: property.province,
+          postalCode: property.postalCode,
+        }
+      : {
+          title: "",
+          description: "",
+          rent: 0,
+          street: "",
+          city: "",
+          province: "",
+          postalCode: "",
+        },
   });
 
-  useEffect(() => {
-    if (property) {
-      setFormValues({
-        title: property.title,
-        description: property.description || "",
-        rent: Number(property.rent),
-        imageUrl: property.imageUrl || "",
-        street: property.street,
-        city: property.city,
-        province: property.province,
-        postalCode: property.postalCode,
-      });
-      form.reset({
-        title: property.title,
-        description: property.description || "",
-        rent: Number(property.rent),
-        imageUrl: property.imageUrl || "",
-        street: property.street,
-        city: property.city,
-        province: property.province,
-        postalCode: property.postalCode,
-      });
-    }
-  }, [property, form]);
-
   const onSubmit = async (values: z.infer<typeof propertySchema>) => {
-    try {
-      const transformedValues = {
-        ...values,
-        description: values.description || null,
-        imageUrl: values.imageUrl || null,
-      };
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description || "");
+    formData.append("rent", String(values.rent));
+    formData.append("street", values.street);
+    formData.append("city", values.city);
+    formData.append("province", values.province);
+    formData.append("postalCode", values.postalCode);
 
+    // Add image file if selected
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    try {
       const res = await fetch(`http://localhost:3500/api/properties/${propertyId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(transformedValues),
         credentials: "include",
+        body: formData,
       });
       const data = await res.json();
       if (data.success) {
@@ -192,20 +182,22 @@ export const UpdateProperty = () => {
           )}
         />
 
-        {/* Image URL Field */}
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="Image URL" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Image Field */}
+        <FormItem>
+          <FormLabel>Image</FormLabel>
+          <FormControl>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files) {
+                  setImageFile(e.target.files[0]);
+                }
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
 
         {/* Street Field */}
         <FormField

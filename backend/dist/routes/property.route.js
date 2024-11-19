@@ -10,6 +10,6 @@ const propertyRouter = (0, express_1.Router)();
 propertyRouter.get('/', property_controller_1.default.getProperties);
 propertyRouter.post('/add', multer_1.default.single("image"), property_controller_1.default.addProperty);
 propertyRouter.get('/:id', property_controller_1.default.getPropertyById);
-propertyRouter.put('/:id', property_controller_1.default.updatePropertyById);
+propertyRouter.put('/:id', multer_1.default.single("image"), property_controller_1.default.updatePropertyById);
 propertyRouter.delete('/:id', property_controller_1.default.deletePropertyById);
 exports.default = propertyRouter;

@@ -76,19 +76,35 @@ const updatePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(403).json({ success: false, message: "You are not allowed to update this Property" });
         return;
     }
-    const { title, description, rent, imageUrl, street, city, province, postalCode } = req.body;
+    const { title, description, rent, street, city, province, postalCode } = req.body;
+    let imageUrl = property.imageUrl;
+    // upload image to cloudinary
+    if (req.file) {
+        try {
+            imageUrl = yield (0, cloudinary_util_1.uploadImage)(req.file.path, "property-management");
+        }
+        catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+            return;
+        }
+    }
     const updatedData = {
         title: title || property.title,
         description: description || null,
         rent: rent !== undefined ? rent : property.rent,
-        imageUrl: imageUrl || null,
+        imageUrl: imageUrl,
         street: street || property.street,
         city: city || property.city,
         province: province || property.province,
         postalCode: postalCode || property.postalCode,
     };
     const updatedProperty = property_model_1.default.editProperty(id, updatedData);
-    res.status(200).json({ updatedProperty, success: true });
+    if (updatedProperty) {
+        res.status(200).json({ updatedProperty, success: true });
+    }
+    else {
+        res.status(500).json({ success: false, message: "Failed to update property" });
+    }
 });
 // Delete property by id
 const deletePropertyById = (req, res) => {

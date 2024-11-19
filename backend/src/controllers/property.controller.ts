@@ -29,6 +29,7 @@ const addProperty = async (req: MulterRequest, res: Response) => {
     province,
     postalCode
   } = req.body;
+
   let imageUrl: string | null = null;
 
   // upload image to cloudinary
@@ -70,10 +71,11 @@ const getPropertyById = (req: Request<{ id: string }>, res: Response) => {
 };
 
 // Update property by id
-const updatePropertyById = async (req: Request<{ id: string }, {}, Partial<Property>>, res: Response) => {
+const updatePropertyById = async (req: MulterRequest, res: Response) => {
   const { id } = req.params;
   const property = propertyModel.findById(id);
   const userId = req.signedCookies.userId;
+
   if (!property) {
     res.status(404).json({ success: false, message: "Property not found" });
     return;
@@ -87,24 +89,41 @@ const updatePropertyById = async (req: Request<{ id: string }, {}, Partial<Prope
     title,
     description,
     rent,
-    imageUrl,
     street,
     city,
     province,
     postalCode
   } = req.body;
+
+  let imageUrl = property.imageUrl;
+
+  // upload image to cloudinary
+  if (req.file) {
+    try {
+      imageUrl = await uploadImage(req.file.path, "property-management");
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as Error).message });
+      return;
+    }
+  }
+
   const updatedData: Partial<Property> = {
     title: title || property.title,
     description: description || null,
     rent: rent !== undefined ? rent : property.rent,
-    imageUrl: imageUrl || null,
+    imageUrl: imageUrl,
     street: street || property.street,
     city: city || property.city,
     province: province || property.province,
     postalCode: postalCode || property.postalCode,
   };
+
   const updatedProperty = propertyModel.editProperty(id, updatedData);
-  res.status(200).json({ updatedProperty, success: true });
+  if (updatedProperty) {
+    res.status(200).json({ updatedProperty, success: true });
+  } else {
+    res.status(500).json({ success: false, message: "Failed to update property" });
+  }
 };
 
 // Delete property by id

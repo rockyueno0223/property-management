@@ -8,7 +8,7 @@ propertyRouter.get('/', propertyController.getProperties);
 propertyRouter.post('/add', upload.single("image"), propertyController.addProperty);
 
 propertyRouter.get('/:id', propertyController.getPropertyById);
-propertyRouter.put('/:id', propertyController.updatePropertyById);
+propertyRouter.put('/:id', upload.single("image"), propertyController.updatePropertyById);
 propertyRouter.delete('/:id', propertyController.deletePropertyById);
 
 export default propertyRouter;
