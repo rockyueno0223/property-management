@@ -96,7 +96,12 @@ export const PropertyDetail = () => {
         </p>
         <p className="flex items-end gap-2">
           <span className="text-lg font-semibold">Email</span>
-          {ownerData?.email}
+          <a
+            href={`mailto:${ownerData?.email}`}
+            className="text-blue-500 underline hover:text-blue-700"
+          >
+            {ownerData?.email}
+          </a>
         </p>
       </div>
       <Button
