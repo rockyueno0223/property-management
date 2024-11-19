@@ -34,6 +34,7 @@ export const CreateProperty = () => {
 
   const { user } = useAppContext();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.accountType !== 'owner') {
@@ -54,6 +55,16 @@ export const CreateProperty = () => {
       postalCode: "",
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof propertySchema>) => {
     const formData = new FormData();
@@ -109,6 +120,24 @@ export const CreateProperty = () => {
           )}
         />
 
+        {/* Image Field */}
+        <FormItem>
+          <FormLabel>Image</FormLabel>
+          <FormControl>
+            <Input type="file" accept="image/*" onChange={handleImageChange} />
+          </FormControl>
+          {previewImage && (
+            <div className="mt-4">
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="max-w-full h-auto rounded shadow-md"
+              />
+            </div>
+          )}
+          <FormMessage />
+        </FormItem>
+
         {/* Description Field */}
         <FormField
           control={form.control}
@@ -148,23 +177,6 @@ export const CreateProperty = () => {
             </FormItem>
           )}
         />
-
-        {/* Image URL Field */}
-        <FormItem>
-          <FormLabel>Image</FormLabel>
-          <FormControl>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files) {
-                  setImageFile(e.target.files[0]);
-                }
-              }}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
 
         {/* Street Field */}
         <FormField

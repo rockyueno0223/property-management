@@ -68,11 +68,13 @@ export const PropertyDetail = () => {
           }
         </p>
       </div>
-      <img
-        src={property?.imageUrl || ''}
-        alt={property?.title}
-        className="w-full h-auto"
-      />
+      {property?.imageUrl &&
+        <img
+          src={property?.imageUrl || ''}
+          alt={property?.title}
+          className="max-w-full h-auto rounded shadow-md"
+        />
+      }
       <div className="py-2">
         <p className="my-2">{property?.description}</p>
         <p className="flex gap-2">

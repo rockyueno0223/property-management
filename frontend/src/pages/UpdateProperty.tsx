@@ -39,6 +39,9 @@ export const UpdateProperty = () => {
   const property = properties.find((prop) => prop.id === propertyId);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    property?.imageUrl || null
+  );
 
   useEffect(() => {
     if (!property || user?.id !== property.ownerId) {
@@ -69,6 +72,16 @@ export const UpdateProperty = () => {
           postalCode: "",
         },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof propertySchema>) => {
     const formData = new FormData();
@@ -146,6 +159,24 @@ export const UpdateProperty = () => {
           )}
         />
 
+        {/* Image Field */}
+        <FormItem>
+          <FormLabel>Image</FormLabel>
+          <FormControl>
+            <Input type="file" accept="image/*" onChange={handleImageChange} />
+          </FormControl>
+          {previewImage && (
+            <div className="mt-4">
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="max-w-full h-auto rounded shadow-md"
+              />
+            </div>
+          )}
+          <FormMessage />
+        </FormItem>
+
         {/* Description Field */}
         <FormField
           control={form.control}
@@ -181,23 +212,6 @@ export const UpdateProperty = () => {
             </FormItem>
           )}
         />
-
-        {/* Image Field */}
-        <FormItem>
-          <FormLabel>Image</FormLabel>
-          <FormControl>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files) {
-                  setImageFile(e.target.files[0]);
-                }
-              }}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
 
         {/* Street Field */}
         <FormField
