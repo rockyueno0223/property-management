@@ -23,3 +23,13 @@ export const uploadImage = async (imagePath: string, folder: string): Promise<st
     throw new Error("Failed to upload image to Cloudinary");
   }
 };
+
+export const deleteImage = async (publicId: string): Promise<boolean> => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result.result === "ok";
+  } catch (error) {
+    console.error("Cloudinary Deletion Error:", error);
+    return false;
+  }
+};

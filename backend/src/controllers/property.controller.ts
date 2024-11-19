@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import propertyModel from '../models/property.model';
 import { Property } from '../../../shared/types/property';
-import { uploadImage } from '../utils/cloudinary.util';
+import { deleteImage, uploadImage } from '../utils/cloudinary.util';
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -100,6 +100,15 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
   // upload image to cloudinary
   if (req.file) {
     try {
+      // Delete old image if it exists
+      if (property.imageUrl) {
+        const publicId = property.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+        if (publicId) {
+          await deleteImage(publicId);
+        }
+      }
+
+      // Upload new image
       imageUrl = await uploadImage(req.file.path, "property-management");
     } catch (error) {
       res.status(500).json({ success: false, message: (error as Error).message });
@@ -127,8 +136,29 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
 };
 
 // Delete property by id
-const deletePropertyById = (req: Request<{ id: string }>, res: Response) => {
+const deletePropertyById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
+
+  const property = propertyModel.findById(id);
+  if (!property) {
+    res.status(404).json({ success: false, message: "Property not found" });
+    return;
+  }
+
+  // Delete the image from Cloudinary
+  if (property.imageUrl) {
+    const publicId = property.imageUrl
+      .split("/").slice(-2).join("/").split(".")[0];
+
+    try {
+      const deletionResult = await deleteImage(publicId);
+    } catch (error) {
+      console.error("Failed to delete image from Cloudinary:", error);
+      // Proceed with property deletion even if image deletion fails
+    }
+  }
+
+  // Delete data from database
   const isDeleted = propertyModel.deleteProperty(id);
   if (!isDeleted) {
     res.status(404).json({ success: false, message: 'Property not found' });

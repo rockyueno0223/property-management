@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImage = void 0;
+exports.deleteImage = exports.uploadImage = void 0;
 const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const uploadImage = (imagePath, folder) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -39,3 +39,14 @@ const uploadImage = (imagePath, folder) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.uploadImage = uploadImage;
+const deleteImage = (publicId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield cloudinary_1.default.uploader.destroy(publicId);
+        return result.result === "ok";
+    }
+    catch (error) {
+        console.error("Cloudinary Deletion Error:", error);
+        return false;
+    }
+});
+exports.deleteImage = deleteImage;

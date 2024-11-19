@@ -81,6 +81,14 @@ const updatePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, funct
     // upload image to cloudinary
     if (req.file) {
         try {
+            // Delete old image if it exists
+            if (property.imageUrl) {
+                const publicId = property.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+                if (publicId) {
+                    yield (0, cloudinary_util_1.deleteImage)(publicId);
+                }
+            }
+            // Upload new image
             imageUrl = yield (0, cloudinary_util_1.uploadImage)(req.file.path, "property-management");
         }
         catch (error) {
@@ -107,15 +115,33 @@ const updatePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 // Delete property by id
-const deletePropertyById = (req, res) => {
+const deletePropertyById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const property = property_model_1.default.findById(id);
+    if (!property) {
+        res.status(404).json({ success: false, message: "Property not found" });
+        return;
+    }
+    // Delete the image from Cloudinary
+    if (property.imageUrl) {
+        const publicId = property.imageUrl
+            .split("/").slice(-2).join("/").split(".")[0];
+        try {
+            const deletionResult = yield (0, cloudinary_util_1.deleteImage)(publicId);
+        }
+        catch (error) {
+            console.error("Failed to delete image from Cloudinary:", error);
+            // Proceed with property deletion even if image deletion fails
+        }
+    }
+    // Delete data from database
     const isDeleted = property_model_1.default.deleteProperty(id);
     if (!isDeleted) {
         res.status(404).json({ success: false, message: 'Property not found' });
         return;
     }
     res.status(200).json({ success: true, message: 'Property deleted' });
-};
+});
 exports.default = {
     getProperties,
     addProperty,
