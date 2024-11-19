@@ -75,8 +75,10 @@ export const PropertyDetail = () => {
           className="max-w-full h-auto rounded shadow-md"
         />
       }
-      <div className="py-2">
-        <p className="my-2">{property?.description}</p>
+      <div className="py-3">
+        {property?.description &&
+          <p className="my-2 whitespace-pre-wrap">{property.description}</p>
+        }
         <p className="flex gap-2">
           <span className="text-lg font-semibold">Rent</span>
           <span className="text-lg text-red-500 font-semibold">${property?.rent}</span>
@@ -87,7 +89,7 @@ export const PropertyDetail = () => {
         </p>
       </div>
       <MapComponent address={`${property?.street}, ${property?.city}, ${property?.province}`} />
-      <div className="py-2">
+      <div className="py-3">
         <p className="flex items-end gap-2">
           <span className="text-lg font-semibold">Owner</span>
           {ownerData?.username}
@@ -96,15 +98,15 @@ export const PropertyDetail = () => {
           <span className="text-lg font-semibold">Email</span>
           {ownerData?.email}
         </p>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => navigate('/dashboard')}
-          className="w-full mt-3"
-        >
-          Back to Dashboard
-        </Button>
       </div>
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => navigate('/dashboard')}
+        className="w-full"
+      >
+        Back to Dashboard
+      </Button>
     </div>
   )
 }
