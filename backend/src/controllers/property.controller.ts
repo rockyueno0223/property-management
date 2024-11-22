@@ -52,7 +52,7 @@ const addProperty = async (req: MulterRequest, res: Response) => {
       title,
       description: description || null,
       rent,
-      imageUrl: imageUrl || null,
+      imageUrl,
       street,
       city,
       province,

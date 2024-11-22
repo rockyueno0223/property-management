@@ -48,7 +48,7 @@ const addProperty = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             title,
             description: description || null,
             rent,
-            imageUrl: imageUrl || null,
+            imageUrl,
             street,
             city,
             province,

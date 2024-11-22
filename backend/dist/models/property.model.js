@@ -6,6 +6,10 @@ const propertySchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        default: null,
+    },
     rent: {
         type: Number,
         required: true
@@ -25,6 +29,10 @@ const propertySchema = new mongoose_1.Schema({
     postalCode: {
         type: String,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        default: null,
     },
     ownerId: {
         type: mongoose_1.Schema.Types.ObjectId,
