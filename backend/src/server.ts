@@ -4,8 +4,14 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import userRouter from './routes/user.route';
 import propertyRouter from './routes/property.route';
+import mongoose from 'mongoose';
 
 dotenv.config();
+
+// Connect to database
+mongoose.connect(process.env.MONGO_URI || '')
+  .then(() => { console.log('MongoDB is connected.') })
+  .catch((error) => { console.error(error) });
 
 // Create server
 const app = express();

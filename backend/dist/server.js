@@ -9,7 +9,11 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const property_route_1 = __importDefault(require("./routes/property.route"));
+const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
+mongoose_1.default.connect(process.env.MONGO_URI || '')
+    .then(() => { console.log('MongoDB is connected.'); })
+    .catch((error) => { console.error(error); });
 // Create server
 const app = (0, express_1.default)();
 // Middleware
