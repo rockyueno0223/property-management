@@ -8,7 +8,7 @@ export type Property = {
   city: string;
   province: string;
   postalCode: string;
-  ownerId: string;
+  ownerId: string | { _id: string };
   createdAt: string;
   updatedAt: string;
 }

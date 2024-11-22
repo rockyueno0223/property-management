@@ -24,7 +24,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             <p className="text-red-500 font-semibold">${property.rent}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">{property.city} {property.province}</p>
           </div>
-          <Link to={user?.accountType === 'resident' ? `/dashboard/${property.id}` : `/dashboard/${property.id}/edit`}>
+          <Link to={user?.accountType === 'resident' ? `/dashboard/${property._id}` : `/dashboard/${property._id}/edit`}>
             <Button>
               {user?.accountType === 'resident' ? 'Show detail' : 'Update'}
             </Button>

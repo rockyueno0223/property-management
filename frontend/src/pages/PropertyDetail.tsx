@@ -33,8 +33,9 @@ export const PropertyDetail = () => {
   useEffect(() => {
     const fetchOwnerData = async () => {
       if (property?.ownerId) {
+        const ownerId = typeof property.ownerId === "object" ? property.ownerId._id : property.ownerId;
         try {
-          const res = await fetch(`http://localhost:3500/api/users/${property?.ownerId}`);
+          const res = await fetch(`http://localhost:3500/api/users/${ownerId}`);
           const data = await res.json();
           if (data.success === false) {
             console.error(data.message);

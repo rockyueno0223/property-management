@@ -36,7 +36,7 @@ export const UpdateProperty = () => {
   const { propertyId } = useParams<{ propertyId: string }>();
   const { user, properties } = useAppContext();
 
-  const property = properties.find((prop) => prop.id === propertyId);
+  const property = properties.find((prop) => prop._id === propertyId);
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(
@@ -44,7 +44,7 @@ export const UpdateProperty = () => {
   );
 
   useEffect(() => {
-    if (!property || user?.id !== property.ownerId) {
+    if (!property || user?._id !== (typeof property.ownerId === "object" ? property.ownerId._id : property.ownerId)) {
       // Redirect unauthorized users
       navigate("/dashboard");
     }

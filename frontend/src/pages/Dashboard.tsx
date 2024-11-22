@@ -26,7 +26,10 @@ export const Dashboard = () => {
           return;
         }
         if (user?.accountType === 'owner') {
-          const filteredData = data.properties.filter((property: Property) => property.ownerId === user?.id);
+          const filteredData = data.properties.filter((property: Property) => {
+            const ownerId = typeof property.ownerId === 'string' ? property.ownerId : property.ownerId._id;
+            return ownerId === user?._id;
+          });
           setProperties(filteredData);
           setFilteredProperties(filteredData);
         } else {
@@ -111,7 +114,7 @@ export const Dashboard = () => {
       {filteredProperties.length > 0 ? (
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {filteredProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyCard key={property._id} property={property} />
           ))}
         </div>
       ) : (

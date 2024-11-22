@@ -39,7 +39,7 @@ export const UserProfile = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const res = await fetch(`http://localhost:3500/api/users/${user?.id}`, {
+      const res = await fetch(`http://localhost:3500/api/users/${user?._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
