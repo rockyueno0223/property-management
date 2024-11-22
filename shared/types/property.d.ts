@@ -1,5 +1,5 @@
 export type Property = {
-  id: string;
+  _id: string;
   title: string;
   description: string | null;
   rent: number;
