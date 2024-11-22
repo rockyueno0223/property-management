@@ -15,61 +15,81 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_model_1 = __importDefault(require("../models/user.model"));
 const hash_util_1 = require("../utils/hash.util");
 // Get users
-const getUsers = (req, res) => {
-    const users = user_model_1.default.findAll();
-    res.json({ users, success: true });
-};
+const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield user_model_1.default.find();
+        res.json({ users, success: true });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to get users' });
+    }
+});
 // Add user
 const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, email, password, accountType } = req.body;
-    const emailExists = user_model_1.default.findAll().some((user) => user.email === email);
-    if (emailExists) {
-        res.status(400).json({ success: false, message: 'Email already in use' });
-        return;
-    }
-    const hashedPassword = yield (0, hash_util_1.hashed)(password);
-    const user = user_model_1.default.createUser({ username, email, password: hashedPassword, accountType });
-    if (user) {
+    try {
+        const emailExists = yield user_model_1.default.exists({ email });
+        if (emailExists) {
+            res.status(400).json({ success: false, message: 'Email already in use' });
+            return;
+        }
+        const hashedPassword = yield (0, hash_util_1.hashed)(password);
+        const newUser = new user_model_1.default({
+            username,
+            email,
+            password: hashedPassword,
+            accountType
+        });
+        const savedUser = yield newUser.save();
         res.cookie('isAuthenticated', true, {
             httpOnly: true,
             maxAge: 60 * 60 * 1000, // change later
             signed: true,
         });
-        res.cookie('userId', user.id, {
+        res.cookie('userId', savedUser._id.toString(), {
             httpOnly: true,
             maxAge: 60 * 60 * 1000, // change later
             signed: true,
         });
-        res.status(201).json({ user, success: true });
+        res.status(201).json({ user: savedUser, success: true });
     }
-    else {
+    catch (error) {
         res.status(500).json({ success: false, message: 'Failed to create user' });
     }
 });
 // Login user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
-    const user = user_model_1.default.findByEmail(email);
-    if (!user) {
-        res.status(404).json({ success: false, message: 'User not found' });
-        return;
+    try {
+        const user = yield user_model_1.default.findOne({ email });
+        if (!user) {
+            res.status(404).json({ success: false, message: 'User not found' });
+            return;
+        }
+        if (!user.password) {
+            res.status(500).json({ success: false, message: 'User password is missing' });
+            return;
+        }
+        const isMatch = yield (0, hash_util_1.compareHash)(password, user.password);
+        if (!isMatch) {
+            res.status(401).json({ success: false, message: 'Password is invalid' });
+            return;
+        }
+        res.cookie('isAuthenticated', true, {
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000, // change later
+            signed: true
+        });
+        res.cookie('userId', user._id.toString(), {
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000, // change later
+            signed: true
+        });
+        res.status(200).json({ user, success: true, message: 'Login authenticated' });
     }
-    const isMatch = yield (0, hash_util_1.compareHash)(password, user.password);
-    if (!isMatch) {
-        res.status(401).json({ success: false, message: 'Password is invalid' });
-        return;
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to login' });
     }
-    res.cookie('isAuthenticated', true, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000, // change later
-        signed: true
-    });
-    res.cookie('userId', user.id, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000, // change later
-        signed: true
-    });
-    res.status(200).json({ user, success: true, message: 'Login authenticated' });
 });
 // Logout user
 const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -88,41 +108,56 @@ const checkAuth = (req, res) => {
     res.status(200).json({ success: true, message: 'Auth checked successful' });
 };
 // Get user by id
-const getUserById = (req, res) => {
+const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const user = user_model_1.default.findById(id);
-    if (!user) {
-        res.status(404).json({ success: false, message: 'User not found' });
-        return;
+    try {
+        const user = yield user_model_1.default.findById(id);
+        if (!user) {
+            res.status(404).json({ success: false, message: 'User not found' });
+            return;
+        }
+        res.json({ user, success: true });
     }
-    res.json({ user, success: true });
-};
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to get user' });
+    }
+});
 // Update user by id
-const updateUserById = (req, res) => {
+const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { username, email } = req.body;
-    const emailExists = user_model_1.default.findAll().some((user) => user.email === email);
-    if (emailExists) {
-        res.status(400).json({ success: false, message: 'Email already in use' });
-        return;
+    try {
+        const emailExists = yield user_model_1.default.findOne({ email, _id: { $ne: id } });
+        if (emailExists) {
+            res.status(400).json({ success: false, message: 'Email already in use' });
+            return;
+        }
+        const updatedUser = yield user_model_1.default.findByIdAndUpdate(id, { username, email }, { new: true, runValidators: true });
+        if (!updatedUser) {
+            res.status(404).json({ success: false, message: "User not found" });
+            return;
+        }
+        res.status(200).json({ user: updatedUser, success: true });
     }
-    const user = user_model_1.default.editUser(id, { username, email });
-    if (!user) {
-        res.status(404).json({ success: false, message: "User not found" });
-        return;
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update user' });
     }
-    res.status(200).json({ user, success: true });
-};
+});
 // Delete user by id
-const deleteUserById = (req, res) => {
+const deleteUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const isDeleted = user_model_1.default.deleteUser(id);
-    if (!isDeleted) {
-        res.status(404).json({ success: false, message: 'User not found' });
-        return;
+    try {
+        const isDeleted = yield user_model_1.default.findByIdAndDelete(id);
+        if (!isDeleted) {
+            res.status(404).json({ success: false, message: 'User not found' });
+            return;
+        }
+        res.status(200).json({ success: true, message: 'User deleted' });
     }
-    res.status(200).json({ success: true, message: 'User deleted' });
-};
+    catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to delete user' });
+    }
+});
 exports.default = {
     getUsers,
     addUser,

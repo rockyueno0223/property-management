@@ -1,72 +1,90 @@
 import { Request, Response } from 'express';
-import userModel from '../models/user.model';
-import { User } from '../../../shared/types/user';
+import User from '../models/user.model';
 import { hashed, compareHash } from '../utils/hash.util';
 
 // Get users
-const getUsers = (req: Request, res: Response) => {
-  const users = userModel.findAll();
-  res.json({ users, success: true });
+const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.json({ users, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to get users' });
+  }
 };
 
 // Add user
-const addUser = async (req: Request<{}, {}, User>, res: Response) => {
+const addUser = async (req: Request, res: Response) => {
   const { username, email, password, accountType } = req.body;
 
-  const emailExists = userModel.findAll().some((user) => user.email === email);
-  if (emailExists) {
-    res.status(400).json({ success: false, message: 'Email already in use' });
-    return;
-  }
+  try {
+    const emailExists = await User.exists({ email });
+    if (emailExists) {
+      res.status(400).json({ success: false, message: 'Email already in use' });
+      return;
+    }
 
-  const hashedPassword = await hashed(password);
-  const user = userModel.createUser({ username, email, password: hashedPassword, accountType });
+    const hashedPassword = await hashed(password);
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      accountType
+    });
+    const savedUser = await newUser.save();
 
-  if (user) {
     res.cookie('isAuthenticated', true, {
       httpOnly: true,
       maxAge: 60 * 60 * 1000, // change later
       signed: true,
     });
-    res.cookie('userId', user.id, {
+    res.cookie('userId', savedUser._id.toString(), {
       httpOnly: true,
       maxAge: 60 * 60 * 1000, // change later
       signed: true,
     });
-    res.status(201).json({ user, success: true });
-  } else {
+    res.status(201).json({ user: savedUser, success: true });
+  } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to create user' });
   }
 };
 
 // Login user
-const loginUser = async (req: Request<{}, {}, User>, res: Response) => {
+const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const user = userModel.findByEmail(email);
-  if (!user) {
-    res.status(404).json({ success: false, message: 'User not found' });
-    return;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+    if (!user.password) {
+      res.status(500).json({ success: false, message: 'User password is missing' });
+      return;
+    }
+    const isMatch = await compareHash(password, user.password);
+    if (!isMatch) {
+      res.status(401).json({ success: false, message: 'Password is invalid' });
+      return;
+    }
+
+    res.cookie('isAuthenticated', true, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000, // change later
+      signed: true
+    });
+    res.cookie('userId', user._id.toString(), {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000, // change later
+      signed: true
+    });
+    res.status(200).json({ user, success: true, message: 'Login authenticated' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to login' });
   }
-  const isMatch = await compareHash(password, user.password);
-  if (!isMatch) {
-    res.status(401).json({ success: false, message: 'Password is invalid' });
-    return;
-  }
-  res.cookie('isAuthenticated', true, {
-    httpOnly: true,
-    maxAge: 60 * 60 * 1000, // change later
-    signed: true
-  });
-  res.cookie('userId', user.id, {
-    httpOnly: true,
-    maxAge: 60 * 60 * 1000, // change later
-    signed: true
-  });
-  res.status(200).json({ user, success: true, message: 'Login authenticated' });
 };
 
 // Logout user
-const logoutUser = async (req: Request<{}, {}, User>, res: Response) => {
+const logoutUser = async (req: Request, res: Response) => {
   res.clearCookie('isAuthenticated', {
     httpOnly: true,
     signed: true
@@ -84,44 +102,60 @@ const checkAuth = (req: Request, res: Response) => {
 };
 
 // Get user by id
-const getUserById = (req: Request<{ id: string }>, res: Response) => {
+const getUserById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
-  const user = userModel.findById(id);
-  if (!user) {
-    res.status(404).json({ success: false, message: 'User not found' });
-    return;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+    res.json({ user, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to get user' });
   }
-  res.json({ user, success: true });
 };
 
 // Update user by id
-const updateUserById = (req: Request<{ id: string }, {}, User>, res: Response) => {
+const updateUserById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
   const { username, email } = req.body;
 
-  const emailExists = userModel.findAll().some((user) => user.email === email);
-  if (emailExists) {
-    res.status(400).json({ success: false, message: 'Email already in use' });
-    return;
-  }
+  try {
+    const emailExists = await User.findOne({ email, _id: { $ne: id } });
+    if (emailExists) {
+      res.status(400).json({ success: false, message: 'Email already in use' });
+      return;
+    }
 
-  const user = userModel.editUser(id, { username, email });
-  if (!user) {
-    res.status(404).json({ success: false, message: "User not found" });
-    return;
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { username, email },
+      { new: true, runValidators: true }
+    );
+    if (!updatedUser) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+    res.status(200).json({ user: updatedUser, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update user' });
   }
-  res.status(200).json({ user, success: true });
 };
 
 // Delete user by id
-const deleteUserById = (req: Request<{ id: string }>, res: Response) => {
+const deleteUserById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
-  const isDeleted = userModel.deleteUser(id);
-  if (!isDeleted) {
-    res.status(404).json({ success: false, message: 'User not found' });
-    return;
+  try {
+    const isDeleted = await User.findByIdAndDelete(id);
+    if (!isDeleted) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+    res.status(200).json({ success: true, message: 'User deleted'});
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete user' });
   }
-  res.status(200).json({ success: true, message: 'User deleted'});
 };
 
 export default {

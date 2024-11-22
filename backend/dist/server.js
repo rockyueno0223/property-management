@@ -11,6 +11,7 @@ const user_route_1 = __importDefault(require("./routes/user.route"));
 const property_route_1 = __importDefault(require("./routes/property.route"));
 const mongoose_1 = __importDefault(require("mongoose"));
 dotenv_1.default.config();
+// Connect to database
 mongoose_1.default.connect(process.env.MONGO_URI || '')
     .then(() => { console.log('MongoDB is connected.'); })
     .catch((error) => { console.error(error); });
