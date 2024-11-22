@@ -1,15 +1,20 @@
 import { Request, Response } from 'express';
-import propertyModel from '../models/property.model';
-import { Property } from '../../../shared/types/property';
+import Property from '../models/property.model';
+import User from '../models/user.model';
 import { deleteImage, uploadImage } from '../utils/cloudinary.util';
+
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
 
 // Get properties
-const getProperties = (req: Request, res: Response) => {
-  const properties = propertyModel.findAll();
-  res.json({ properties, success: true });
+const getProperties = async (req: Request, res: Response) => {
+  try {
+    const properties = await Property.find().populate("ownerId", "username email");
+    res.json({ properties, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to get properties" });
+  }
 };
 
 // Add property
@@ -42,95 +47,98 @@ const addProperty = async (req: MulterRequest, res: Response) => {
     }
   }
 
-  const property = propertyModel.createProperty({
-    title,
-    description: description || null,
-    rent,
-    imageUrl: imageUrl || null,
-    street,
-    city,
-    province,
-    postalCode,
-    ownerId: userId
-  });
-
-  if (property) {
-    res.status(201).json({ property, success: true });
+  try {
+    const newProperty = new Property({
+      title,
+      description: description || null,
+      rent,
+      imageUrl: imageUrl || null,
+      street,
+      city,
+      province,
+      postalCode,
+      ownerId: userId
+    });
+    const savedProperty = await newProperty.save();
+    res.status(201).json({ property: savedProperty, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to create property" });
   }
 };
 
 // Get property by id
-const getPropertyById = (req: Request<{ id: string }>, res: Response) => {
+const getPropertyById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
-  const property = propertyModel.findById(id);
-  if (!property) {
-    res.status(404).json({ success: false, message: 'Property not found' });
-    return;
+  try {
+    const property = await Property.findById(id).populate("ownerId", "username email");
+    if (!property) {
+      res.status(404).json({ success: false, message: 'Property not found' });
+      return;
+    }
+    res.json({ property, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to get property" });
   }
-  res.json({ property, success: true });
 };
 
 // Update property by id
 const updatePropertyById = async (req: MulterRequest, res: Response) => {
   const { id } = req.params;
-  const property = propertyModel.findById(id);
   const userId = req.signedCookies.userId;
 
-  if (!property) {
-    res.status(404).json({ success: false, message: "Property not found" });
-    return;
-  }
-  if (property.ownerId !== userId) {
-    res.status(403).json({ success: false, message: "You are not allowed to update this Property" });
-    return;
-  }
-
-  const {
-    title,
-    description,
-    rent,
-    street,
-    city,
-    province,
-    postalCode
-  } = req.body;
-
-  let imageUrl = property.imageUrl;
-
-  // upload image to cloudinary
-  if (req.file) {
-    try {
-      // Delete old image if it exists
-      if (property.imageUrl) {
-        const publicId = property.imageUrl.split('/').slice(-2).join('/').split('.')[0];
-        if (publicId) {
-          await deleteImage(publicId);
-        }
-      }
-
-      // Upload new image
-      imageUrl = await uploadImage(req.file.path, "property-management");
-    } catch (error) {
-      res.status(500).json({ success: false, message: (error as Error).message });
+  try {
+    const property = await Property.findById(id);
+    if (!property) {
+      res.status(404).json({ success: false, message: "Property not found" });
       return;
     }
-  }
+    if (property.ownerId.toString() !== userId) {
+      res.status(403).json({ success: false, message: "You are not allowed to update this Property" });
+      return;
+    }
 
-  const updatedData: Partial<Property> = {
-    title: title || property.title,
-    description: description || null,
-    rent: rent !== undefined ? rent : property.rent,
-    imageUrl: imageUrl,
-    street: street || property.street,
-    city: city || property.city,
-    province: province || property.province,
-    postalCode: postalCode || property.postalCode,
-  };
+    const {
+      title,
+      description,
+      rent,
+      street,
+      city,
+      province,
+      postalCode
+    } = req.body;
 
-  const updatedProperty = propertyModel.editProperty(id, updatedData);
-  if (updatedProperty) {
+    let imageUrl = property.imageUrl;
+    // upload image to cloudinary
+    if (req.file) {
+      try {
+        // Delete old image if it exists
+        if (property.imageUrl) {
+          const publicId = property.imageUrl.split('/').slice(-2).join('/').split('.')[0];
+          if (publicId) {
+            await deleteImage(publicId);
+          }
+        }
+
+        // Upload new image
+        imageUrl = await uploadImage(req.file.path, "property-management");
+      } catch (error) {
+        res.status(500).json({ success: false, message: (error as Error).message });
+        return;
+      }
+    }
+
+    property.title = title || property.title;
+    property.description = description || null;
+    property.rent = rent !== undefined ? rent : property.rent;
+    property.street = street || property.street;
+    property.city = city || property.city;
+    property.province = province || property.province;
+    property.postalCode = postalCode || property.postalCode;
+    property.imageUrl = imageUrl;
+
+    const updatedProperty = await property.save();
     res.status(200).json({ updatedProperty, success: true });
-  } else {
+  } catch (error) {
     res.status(500).json({ success: false, message: "Failed to update property" });
   }
 };
@@ -138,33 +146,31 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
 // Delete property by id
 const deletePropertyById = async (req: Request<{ id: string }>, res: Response) => {
   const { id } = req.params;
-
-  const property = propertyModel.findById(id);
-  if (!property) {
-    res.status(404).json({ success: false, message: "Property not found" });
-    return;
-  }
-
-  // Delete the image from Cloudinary
-  if (property.imageUrl) {
-    const publicId = property.imageUrl
-      .split("/").slice(-2).join("/").split(".")[0];
-
-    try {
-      const deletionResult = await deleteImage(publicId);
-    } catch (error) {
-      console.error("Failed to delete image from Cloudinary:", error);
-      // Proceed with property deletion even if image deletion fails
+  try {
+    const property = await Property.findById(id);
+    if (!property) {
+      res.status(404).json({ success: false, message: "Property not found" });
+      return;
     }
-  }
 
-  // Delete data from database
-  const isDeleted = propertyModel.deleteProperty(id);
-  if (!isDeleted) {
-    res.status(404).json({ success: false, message: 'Property not found' });
-    return;
+    // Delete the image from Cloudinary
+    if (property.imageUrl) {
+      try {
+        const publicId = property.imageUrl
+        .split("/").slice(-2).join("/").split(".")[0];
+        await deleteImage(publicId);
+      } catch (error) {
+        console.error("Failed to delete image from Cloudinary:", error);
+        // Proceed with property deletion even if image deletion fails
+      }
+    }
+
+    // Delete data from database
+    await Property.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Property deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to delete property" });
   }
-  res.status(200).json({ success: true, message: 'Property deleted' });
 };
 
 export default {
