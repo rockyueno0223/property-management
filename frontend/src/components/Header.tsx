@@ -18,7 +18,7 @@ export const Header: React.FC = () => {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('http://localhost:3500/api/users/logout', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/logout`, {
         credentials: 'include'
       });
       const data = await res.json();

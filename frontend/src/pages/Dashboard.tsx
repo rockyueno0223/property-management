@@ -19,7 +19,7 @@ export const Dashboard = () => {
     // Fetch Properties
     const fetchProperties = async () => {
       try {
-        const res = await fetch('http://localhost:3500/api/properties');
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/properties`);
         const data = await res.json();
         if (data.success === false) {
           console.error(data.message);

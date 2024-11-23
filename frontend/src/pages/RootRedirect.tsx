@@ -8,7 +8,7 @@ export const RootRedirect = () => {
     const checkAuth = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3500/api/users/check-auth`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/check-auth`,
           {
             credentials: "include",
           }
