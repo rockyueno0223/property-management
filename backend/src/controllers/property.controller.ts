@@ -20,6 +20,8 @@ const getProperties = async (req: Request, res: Response) => {
 // Add property
 const addProperty = async (req: MulterRequest, res: Response) => {
   const userId = req.signedCookies.userId;
+  console.log('userId', userId);
+
   if (!userId) {
     res.status(401).json({ success: false, message: 'User not authenticated' });
     return;
@@ -88,6 +90,10 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
 
   try {
     const property = await Property.findById(id);
+    console.log('userId', userId);
+    console.log('property.ownerId', property?.ownerId);
+    console.log('property.ownerId.toString', property?.ownerId.toString());
+
     if (!property) {
       res.status(404).json({ success: false, message: "Property not found" });
       return;
