@@ -26,17 +26,6 @@ app.use(cookieParser(process.env.COOKIE_SIGN_KEY));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
-// test code start
-app.use((req, res, next) => {
-  console.log(`Incoming request: ${req.method} ${req.url}`);
-  console.log('Request Headers:', req.headers);
-  next();
-});
-app.get('/test', (req, res) => {
-  res.json({ message: 'CORS is working!' });
-});
-// test code end
-
 // Routes
 app.use('/api/users', userRouter);
 app.use('/api/properties', propertyRouter);

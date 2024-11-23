@@ -90,7 +90,8 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
 
   try {
     const property = await Property.findById(id);
-    console.log('signed cookie', req.signedCookies);
+    console.log('Signed Cookies:', req.signedCookies);
+    console.log('Raw Cookies:', req.cookies);
     console.log('userId', userId);
     console.log('property.ownerId', property?.ownerId);
     console.log('property.ownerId.toString', property?.ownerId.toString());
