@@ -34,13 +34,17 @@ const addUser = async (req: Request, res: Response) => {
 
     res.cookie('isAuthenticated', true, {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000, // change later
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
       signed: true,
+      secure: true,
+      sameSite: 'none',
     });
     res.cookie('userId', savedUser._id.toString(), {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000, // change later
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
       signed: true,
+      secure: true,
+      sameSite: 'none',
     });
     res.status(201).json({ user: savedUser, success: true });
   } catch (error) {
@@ -69,13 +73,17 @@ const loginUser = async (req: Request, res: Response) => {
 
     res.cookie('isAuthenticated', true, {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000, // change later
-      signed: true
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      signed: true,
+      secure: true,
+      sameSite: 'none',
     });
     res.cookie('userId', user._id.toString(), {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000, // change later
-      signed: true
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      signed: true,
+      secure: true,
+      sameSite: 'none',
     });
     res.status(200).json({ user, success: true, message: 'Login authenticated' });
   } catch (error) {
