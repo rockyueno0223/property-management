@@ -80,7 +80,7 @@ export const CreateProperty = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3500/api/properties/add", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/properties/add`, {
         method: "POST",
         credentials: "include",
         body: formData,

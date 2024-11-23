@@ -99,7 +99,7 @@ export const UpdateProperty = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3500/api/properties/${propertyId}`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/properties/${propertyId}`, {
         method: "PUT",
         credentials: "include",
         body: formData,
@@ -119,7 +119,7 @@ export const UpdateProperty = () => {
 
   const onDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:3500/api/properties/${propertyId}`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/properties/${propertyId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

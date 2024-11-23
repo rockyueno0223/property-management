@@ -42,7 +42,7 @@ export const Signin = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setErrorMessage(null);
     try {
-      const res = await fetch('http://localhost:3500/api/users/login', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
