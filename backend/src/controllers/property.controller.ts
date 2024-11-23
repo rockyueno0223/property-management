@@ -90,9 +90,16 @@ const updatePropertyById = async (req: MulterRequest, res: Response) => {
 
   try {
     const property = await Property.findById(id);
+    console.log('signed cookie', req.signedCookies);
     console.log('userId', userId);
     console.log('property.ownerId', property?.ownerId);
     console.log('property.ownerId.toString', property?.ownerId.toString());
+    console.log('result', property?.ownerId.toString() !== userId);
+    console.log('result2', property?.ownerId.toString().trim() !== userId.trim());
+    console.log('result3', String(property?.ownerId) !== userId);
+    console.log('result4', String(property?.ownerId).trim() !== userId.trim());
+    console.log('result5', String(property?.ownerId) !== String(userId));
+    console.log('result6', String(property?.ownerId).trim() !== String(userId).trim());
 
     if (!property) {
       res.status(404).json({ success: false, message: "Property not found" });
