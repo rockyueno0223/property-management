@@ -19,7 +19,7 @@ mongoose_1.default.connect(process.env.MONGO_URI || '')
 const app = (0, express_1.default)();
 // Middleware
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true
 }));
 app.use((0, cookie_parser_1.default)(process.env.COOKIE_SIGN_KEY));
